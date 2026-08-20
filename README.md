@@ -2,6 +2,8 @@
 
 A country-clue reference and compare tool for [GeoGuessr](https://www.geoguessr.com/) players.
 
+**Live: <https://rm-ccu.github.io/geolearn/>**
+
 GeoLearn collects the small visual tells that identify a country in Street View — which
 side of the road traffic drives on, bollard shapes, road-sign styling, licence-plate
 colours, script and language, plus the countries it's most often mixed up with — and lets
@@ -146,15 +148,14 @@ and diffed in the compare view) and `notes` (prose).
 
 The site is entirely static, so any host that serves files will do.
 
-### GitHub Pages
+### GitHub Pages — already set up
 
-1. Push the repo to GitHub.
-2. **Settings → Pages → Build and deployment**.
-3. Source: **Deploy from a branch**; branch `main`, folder `/ (root)`.
-4. Save. It publishes at `https://<username>.github.io/<repo>/` within a minute or two.
+This repo publishes to <https://rm-ccu.github.io/geolearn/> from `main` / `(root)`.
+**Every push to `main` triggers a rebuild**, which takes about a minute.
 
-Because `index.html` is at the repo root and all asset paths are relative, no configuration
-or workflow file is needed.
+Because `index.html` is at the repo root and every asset path is relative, no workflow file
+or configuration is needed. If you ever need to re-point it: **Settings → Pages → Deploy
+from a branch → `main` / `(root)`**.
 
 ### Netlify
 
