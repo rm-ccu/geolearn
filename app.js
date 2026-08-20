@@ -146,82 +146,179 @@ function plateSwatch(c, size = 64) {
   </svg>`;
 }
 
-const REGIONS = ["All", ...Array.from(new Set(COUNTRIES.map(c => c.region)))];
+// ---------- ccTLD ----------
+
+// The ccTLD is the ISO alpha-2 code lowercased, with a handful of historical
+// exceptions. Britain is the only one that applies to the current dataset.
+const TLD_EXCEPTIONS = { GB: "uk" };
+const ccTLD = (code) => "." + (TLD_EXCEPTIONS[code] || code.toLowerCase());
 
 // ---------- State ----------
 
 let state = {
   view: "browse",
   search: "",
-  region: "All",
-  detailId: null,
+  selectedId: null,      // country focused on the globe and open in the detail panel
   compareLeft: null,
   compareRight: null,
 };
 
+let globe = null;
+
 // ---------- Rendering: Browse ----------
 
-function renderRegionFilter() {
-  const el = document.getElementById("regionFilter");
-  el.innerHTML = REGIONS.map(r =>
-    `<button data-region="${r}" class="${state.region === r ? 'active' : ''}">${r}</button>`
-  ).join("");
-  el.querySelectorAll("button").forEach(btn => {
-    btn.addEventListener("click", () => {
-      state.region = btn.dataset.region;
-      renderRegionFilter();
-      renderGrid();
-    });
-  });
+// Two things can narrow the list: a search, or the country picked on the globe
+// (which scopes the list to that country's region). Search wins when both are
+// active — typing is the more deliberate act, and a search that silently only
+// looked inside one region would be a trap.
+function visibleCountries() {
+  const q = state.search.trim().toLowerCase();
+  const selected = byId(state.selectedId);
+  let list = COUNTRIES;
+  if (q) list = list.filter(c => c.name.toLowerCase().includes(q));
+  else if (selected) list = list.filter(c => c.region === selected.region);
+  return list.slice().sort((a, b) => a.name.localeCompare(b.name));
+}
+
+const regionPeers = (country) =>
+  country ? COUNTRIES.filter(c => c.region === country.region).map(c => c.id) : [];
+
+function renderListHead() {
+  const el = document.getElementById("listHead");
+  const q = state.search.trim();
+  const selected = byId(state.selectedId);
+  const count = visibleCountries().length;
+
+  if (q) {
+    el.innerHTML = `<span class="list-scope">${count} match${count === 1 ? "" : "es"} for &ldquo;${escapeHtml(q)}&rdquo;</span>`;
+    return;
+  }
+  if (selected) {
+    el.innerHTML = `
+      <span class="list-scope">${escapeHtml(selected.region)} <span class="count">${count}</span></span>
+      <button type="button" class="clear-scope" id="clearScope">Show all ${COUNTRIES.length}</button>`;
+    document.getElementById("clearScope").addEventListener("click", clearSelection);
+    return;
+  }
+  el.innerHTML = `<span class="list-scope">All countries <span class="count">${COUNTRIES.length}</span></span>`;
 }
 
 function renderGrid() {
   const grid = document.getElementById("grid");
-  const q = state.search.trim().toLowerCase();
-  const filtered = COUNTRIES.filter(c => {
-    const matchesSearch = !q || c.name.toLowerCase().includes(q);
-    const matchesRegion = state.region === "All" || c.region === state.region;
-    return matchesSearch && matchesRegion;
-  }).sort((a, b) => a.name.localeCompare(b.name));
+  const filtered = visibleCountries();
 
   if (filtered.length === 0) {
-    grid.innerHTML = `<div class="compare-empty" style="grid-column:1/-1">No countries match “${escapeHtml(state.search)}”.</div>`;
+    grid.innerHTML = `<div class="compare-empty" style="grid-column:1/-1">No countries match &ldquo;${escapeHtml(state.search)}&rdquo;.</div>`;
     return;
   }
 
   grid.innerHTML = filtered.map(c => `
-    <button class="plate-card" data-id="${c.id}">
+    <button class="plate-card${c.id === state.selectedId ? " is-selected" : ""}" data-id="${c.id}" aria-pressed="${c.id === state.selectedId}">
       <div class="name-row">
         <h3>${c.name}</h3>
         <span class="side-tag">${c.driving === "left" ? "LEFT" : "RIGHT"}</span>
       </div>
-      ${bollardSVG(c, 48)}
+      <div class="card-mid">
+        ${bollardSVG(c, 48)}
+        ${flagSVG(c.code, c.name, 40)}
+        <span class="tld mono" title="Domain suffix — worth reading off vans and billboards">${ccTLD(c.code)}</span>
+      </div>
       <div class="tip">${c.keyTip}</div>
     </button>
   `).join("");
 
   grid.querySelectorAll(".plate-card").forEach(card => {
-    card.addEventListener("click", () => openDetail(card.dataset.id));
+    card.addEventListener("click", () => selectCountry(card.dataset.id));
   });
 }
 
-// ---------- Rendering: Detail ----------
+// ---------- Selection ----------
 
-function openDetail(id) {
-  state.detailId = id;
-  setView("detail");
-  renderDetail();
+function selectCountry(id) {
+  const c = byId(id);
+  if (!c) return;
+  state.selectedId = id;
+  document.getElementById("browseBody").classList.add("has-selection");
+  renderListHead();
+  renderGrid();
+  renderDetailPanel();
+  setCaption();
+  if (globe) globe.select(id, regionPeers(c));
+  // Stacked layout puts the panel under the list, so it needs bringing into view.
+  if (window.matchMedia("(max-width: 900px)").matches) {
+    document.getElementById("detailCol").scrollIntoView({
+      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+      block: "start",
+    });
+  }
 }
 
-function renderDetail() {
-  const c = byId(state.detailId);
-  if (!c) return;
+function clearSelection() {
+  if (!state.selectedId) return;
+  state.selectedId = null;
+  document.getElementById("browseBody").classList.remove("has-selection");
+  renderListHead();
+  renderGrid();
+  renderDetailPanel();
+  setCaption();
+  if (globe) globe.clear();
+}
+
+// ---------- Globe chrome ----------
+
+const ZOOM_KEY = navigator.platform.toLowerCase().includes("mac") ? "\u2318" : "Ctrl";
+
+function setCaption(text) {
+  const el = document.getElementById("globeCaption");
+  const selected = byId(state.selectedId);
+  if (text) { el.textContent = text; return; }
+  el.textContent = selected
+    ? `${selected.name} — click the ocean or press Esc to zoom back out`
+    : `Drag to spin · click a country · ${ZOOM_KEY} + scroll to zoom`;
+}
+
+function showTip(info) {
+  const tip = document.getElementById("globeTip");
+  const known = info && info.id ? byId(info.id) : null;
+  const label = known ? known.name : (info && info.name);
+  if (!label) { tip.classList.remove("show"); return; }
+  tip.textContent = known ? label : `${label} — not in the guide yet`;
+  tip.classList.toggle("muted", !known);
+  tip.style.left = `${info.x}px`;
+  tip.style.top = `${info.y}px`;
+  tip.classList.add("show");
+}
+
+let hintTimer = null;
+function flashHint() {
+  const el = document.getElementById("globeHint");
+  el.textContent = `Hold ${ZOOM_KEY} and scroll to zoom the globe`;
+  el.classList.add("show");
+  clearTimeout(hintTimer);
+  hintTimer = setTimeout(() => el.classList.remove("show"), 1800);
+}
+
+// ---------- Rendering: Detail panel ----------
+
+function renderDetailPanel() {
+  const col = document.getElementById("detailCol");
   const el = document.getElementById("detailContent");
+  const c = byId(state.selectedId);
+
+  if (!c) {
+    col.hidden = true;
+    el.innerHTML = "";
+    return;
+  }
+  col.hidden = false;
+
   el.innerHTML = `
     <div class="detail-header">
-      <button class="back-btn" id="backToBrowse">&larr; Back</button>
-      <h2>${c.name}</h2>
-      <span class="side-tag">${c.region} &middot; drives on the ${c.driving}</span>
+      <div class="detail-title">
+        <h2>${flagSVG(c.code, c.name, 38)} ${c.name}</h2>
+        <span class="side-tag">${ccTLD(c.code)} &middot; ${c.region} &middot; drives on the ${c.driving}</span>
+      </div>
+      <button type="button" class="close-btn" id="closeDetail" aria-label="Close ${c.name}">&times;</button>
     </div>
 
     <div class="key-tip-banner">
@@ -258,15 +355,28 @@ function renderDetail() {
           if (!other) {
             return `<span class="chip chip-missing" title="Not in data.js yet">${escapeHtml(titleCase(cid))}</span>`;
           }
-          return `<button class="chip" data-compare="${c.id}|${cid}">${other.name} &rarr; compare</button>`;
+          return `
+            <span class="chip chip-pair">
+              <button type="button" class="chip-name" data-select="${cid}">${other.name}</button>
+              <button type="button" class="chip-compare" data-compare="${c.id}|${cid}"
+                      title="Compare ${c.name} with ${other.name}"
+                      aria-label="Compare ${c.name} with ${other.name}">&#8644;</button>
+            </span>`;
         }).join("")}
       </div>
     </div>
   `;
-  document.getElementById("backToBrowse").addEventListener("click", () => setView("browse"));
-  el.querySelectorAll("[data-compare]").forEach(chip => {
-    chip.addEventListener("click", () => {
-      const [a, b] = chip.dataset.compare.split("|");
+
+  document.getElementById("closeDetail").addEventListener("click", clearSelection);
+
+  // Swapping the panel in place keeps you on the globe; the compare button is
+  // the only thing that still leaves the browse view.
+  el.querySelectorAll("[data-select]").forEach(btn => {
+    btn.addEventListener("click", () => selectCountry(btn.dataset.select));
+  });
+  el.querySelectorAll("[data-compare]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const [a, b] = btn.dataset.compare.split("|");
       state.compareLeft = a;
       state.compareRight = byId(b) ? b : null;
       setView("compare"); // setView already re-renders the compare view
@@ -384,22 +494,54 @@ function setView(view) {
   state.view = view;
   document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
   document.getElementById(`view-${view}`).classList.add("active");
-  // Detail is entered from Browse and has no tab of its own — keep Browse lit
-  // rather than leaving neither tab highlighted.
-  const tabView = view === "detail" ? "browse" : view;
-  document.querySelectorAll("nav.tabs button").forEach(b => b.classList.toggle("active", b.dataset.view === tabView));
+  document.querySelectorAll("nav.tabs button").forEach(b => b.classList.toggle("active", b.dataset.view === view));
   if (view === "compare") renderCompare();
+  if (view === "browse" && globe) globe.resize(); // the canvas had no size while hidden
 }
 
 // ---------- Init ----------
 
 document.addEventListener("DOMContentLoaded", () => {
-  renderRegionFilter();
+  createFlightField(
+    document.getElementById("flightField"),
+    document.getElementById("flightMap")
+  );
+
+  renderListHead();
   renderGrid();
+
+  globe = createGlobe(document.getElementById("globeCanvas"), {
+    onSelect: (id, name) => {
+      if (id) { selectCountry(id); return; }
+      // Clicking bare ocean backs out; clicking a country we have no data for
+      // says so instead of silently doing nothing.
+      clearSelection();
+      if (name) {
+        setCaption(`${name} isn't in the guide yet`);
+        setTimeout(() => setCaption(), 2200);
+      }
+    },
+    onHover: showTip,
+    onGesture: (kind) => { if (kind === "scroll-hint") flashHint(); },
+  });
+  setCaption();
+
+  document.querySelectorAll("[data-globe]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      if (btn.dataset.globe === "in") globe.zoomIn();
+      else if (btn.dataset.globe === "out") globe.zoomOut();
+      else { globe.reset(); clearSelection(); }
+    });
+  });
 
   document.getElementById("searchInput").addEventListener("input", (e) => {
     state.search = e.target.value;
+    renderListHead();
     renderGrid();
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && state.view === "browse") clearSelection();
   });
 
   document.querySelectorAll("nav.tabs button").forEach(btn => {

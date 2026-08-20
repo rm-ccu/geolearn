@@ -3,7 +3,7 @@
 
 const COUNTRIES = [
   {
-    id: "germany", name: "Germany", region: "Europe", driving: "right",
+    id: "germany", name: "Germany", code: "DE", region: "Europe", driving: "right",
     bollard: { body: "#f5f5f0", cap: null, band: "#c1443c", shape: "flat", notes: "Flat white rectangular post, red or white reflector band, no dark cap." },
     signs: { bg: "#ffffff", accent: "#1b1d21", notes: "Ortsschild town signs are white with black border/text. Info boards in town centres skew dark, not blue." },
     plates: { bg: "#ffffff", band: "#3b6ea8", notes: "White plate, blue EU strip with 'D' on the left, black city code + letters + numbers, round TÜV inspection sticker top right." },
@@ -12,7 +12,7 @@ const COUNTRIES = [
     confusedWith: ["austria", "switzerland", "poland", "netherlands", "denmark", "luxembourg"]
   },
   {
-    id: "austria", name: "Austria", region: "Europe", driving: "right",
+    id: "austria", name: "Austria", code: "AT", region: "Europe", driving: "right",
     bollard: { body: "#f5f5f0", cap: "#1b1d21", band: "#5a2a24", shape: "flat", notes: "Same white flat body as Germany, but with a distinct black/dark cap and a dark red or blackish reflector." },
     signs: { bg: "#3b6ea8", accent: "#ffffff", notes: "Town-centre info boards commonly use a blue background — a fast tell against Germany and Slovenia's darker boards." },
     plates: { bg: "#ffffff", band: "#3b6ea8", notes: "White plate, blue EU strip with 'A', district-code letters then numbers, black text." },
@@ -21,7 +21,7 @@ const COUNTRIES = [
     confusedWith: ["germany", "slovenia", "switzerland", "czechia", "hungary", "liechtenstein"]
   },
   {
-    id: "switzerland", name: "Switzerland", region: "Europe", driving: "right",
+    id: "switzerland", name: "Switzerland", code: "CH", region: "Europe", driving: "right",
     bollard: { body: "#c1443c", cap: null, band: "#ffffff", shape: "domed", notes: "Distinctive red domed-top post, quite different from the flat German/Austrian posts." },
     signs: { bg: "#ffffff", accent: "#c1443c", notes: "Blue direction signs like much of Europe, but red-bordered warning signs and very clean, well-maintained road paint." },
     plates: { bg: "#ffffff", band: null, notes: "White plate, black text, canton abbreviation, no blue EU band (Switzerland isn't in the EU)." },
@@ -30,7 +30,7 @@ const COUNTRIES = [
     confusedWith: ["germany", "austria", "liechtenstein"]
   },
   {
-    id: "france", name: "France", region: "Europe", driving: "right",
+    id: "france", name: "France", code: "FR", region: "Europe", driving: "right",
     bollard: { body: "#f5f5f0", cap: "#c1443c", band: "#c1443c", shape: "rounded", notes: "Rounded-top white post with a red cap and a red reflector band that wraps around the post." },
     signs: { bg: "#3b6ea8", accent: "#ffffff", notes: "Blue directional signs, and famously long white dashed centre-lines on rural roads." },
     plates: { bg: "#ffffff", band: "#3b6ea8", notes: "White plate, blue EU strip with 'F', black text, department number visible at the end." },
@@ -39,7 +39,7 @@ const COUNTRIES = [
     confusedWith: ["belgium", "monaco", "luxembourg", "andorra"]
   },
   {
-    id: "belgium", name: "Belgium", region: "Europe", driving: "right",
+    id: "belgium", name: "Belgium", code: "BE", region: "Europe", driving: "right",
     bollard: { body: "#f5f5f0", cap: null, band: "#c1443c", shape: "flat-narrow", notes: "Narrow flat white post, red reflector — visually close to Netherlands/Germany, so lean on other clues." },
     signs: { bg: "#3b6ea8", accent: "#ffffff", notes: "Bilingual signage (French/Dutch) in and around Brussels is the single strongest Belgium tell." },
     plates: { bg: "#ff3b30", band: null, notes: "Older-style plates often show red lettering/blur rather than the standard black-on-white EU format." },
@@ -48,7 +48,7 @@ const COUNTRIES = [
     confusedWith: ["netherlands", "france", "luxembourg"]
   },
   {
-    id: "netherlands", name: "Netherlands", region: "Europe", driving: "right",
+    id: "netherlands", name: "Netherlands", code: "NL", region: "Europe", driving: "right",
     bollard: { body: "#f5f5f0", cap: null, band: "#c1443c", shape: "flat-narrow", notes: "Similar flat white/red post family to Belgium and Germany — not a strong standalone clue here." },
     signs: { bg: "#3b6ea8", accent: "#ffffff", notes: "Distinct red-bordered cycling infrastructure signs and dedicated red-brick bike lanes are the giveaway." },
     plates: { bg: "#fadb2c", band: "#3b6ea8", notes: "Bright yellow plates with black text — one of the most recognisable plate colours in Europe." },
@@ -57,7 +57,7 @@ const COUNTRIES = [
     confusedWith: ["belgium", "germany"]
   },
   {
-    id: "italy", name: "Italy", region: "Europe", driving: "right",
+    id: "italy", name: "Italy", code: "IT", region: "Europe", driving: "right",
     bollard: { body: "#1b1d21", cap: null, band: "#c1443c", shape: "wedge", notes: "Black diagonal wedge body reaching to the top, vertical red rectangle on the front, white rectangle on the back." },
     signs: { bg: "#3b6ea8", accent: "#ffffff", notes: "Blue directional arrows and blue-background motorway signage (green is reserved for the autostrada system)." },
     plates: { bg: "#ffffff", band: "#3b6ea8", notes: "White plate, blue side stripe (not full EU band position), black text." },
@@ -66,7 +66,7 @@ const COUNTRIES = [
     confusedWith: ["albania", "san marino", "monaco"]
   },
   {
-    id: "albania", name: "Albania", region: "Europe", driving: "right",
+    id: "albania", name: "Albania", code: "AL", region: "Europe", driving: "right",
     bollard: { body: "#1b1d21", cap: null, band: "#c1443c", shape: "wedge", notes: "Effectively identical to Italy's bollard — this pairing is a known trap, don't rely on it alone." },
     signs: { bg: "#3b6ea8", accent: "#ffffff", notes: "Rougher road maintenance and older infrastructure than Italy on average — a soft, not certain, tell." },
     plates: { bg: "#ffffff", band: null, notes: "White plate, black text, 'AL' country oval sometimes visible, distinct from Italy's EU-band format." },
@@ -75,7 +75,7 @@ const COUNTRIES = [
     confusedWith: ["italy", "north macedonia", "montenegro"]
   },
   {
-    id: "poland", name: "Poland", region: "Europe", driving: "right",
+    id: "poland", name: "Poland", code: "PL", region: "Europe", driving: "right",
     bollard: { body: "#f5f5f0", cap: "#1b1d21", band: "#c1443c", shape: "flat", notes: "Flat white post with a black top section — different profile from Germany's plain flat post." },
     signs: { bg: "#ffffff", accent: "#1b1d21", notes: "Village name signs are white with a red border, black text, and a small locator map top corner." },
     plates: { bg: "#ffffff", band: "#3b6ea8", notes: "White plate, blue EU strip with 'PL', black text, distinctive province-letter prefix." },
@@ -84,7 +84,7 @@ const COUNTRIES = [
     confusedWith: ["germany", "czechia", "slovakia"]
   },
   {
-    id: "czechia", name: "Czechia", region: "Europe", driving: "right",
+    id: "czechia", name: "Czechia", code: "CZ", region: "Europe", driving: "right",
     bollard: { body: "#f5f5f0", cap: null, band: "#f2a900", shape: "flat", notes: "Flat white post with a fluorescent orange reflector band — the orange tone is unusually bright versus neighbours." },
     signs: { bg: "#3b6ea8", accent: "#ffffff", notes: "Blue directional signage similar to Slovakia and Austria; rely on the bollard's orange band to split from those." },
     plates: { bg: "#ffffff", band: "#3b6ea8", notes: "White plate, blue EU strip with 'CZ', black text." },
@@ -93,7 +93,7 @@ const COUNTRIES = [
     confusedWith: ["slovakia", "austria", "poland"]
   },
   {
-    id: "denmark", name: "Denmark", region: "Europe", driving: "right",
+    id: "denmark", name: "Denmark", code: "DK", region: "Europe", driving: "right",
     bollard: { body: "#c1443c", cap: null, band: "#ffffff", shape: "rounded-wrap", notes: "Red post with a reflective band that wraps fully around it, similar concept to France but different colour balance." },
     signs: { bg: "#ffffff", accent: "#1b1d21", notes: "Very flat terrain, dense cyclist infrastructure, and distinctly Scandinavian place names on white-background signs." },
     plates: { bg: "#ffffff", band: "#3b6ea8", notes: "White plate, blue EU strip with 'DK', black text on a slightly squarer plate shape." },
@@ -102,7 +102,7 @@ const COUNTRIES = [
     confusedWith: ["sweden", "norway", "germany"]
   },
   {
-    id: "sweden", name: "Sweden", region: "Europe", driving: "right",
+    id: "sweden", name: "Sweden", code: "SE", region: "Europe", driving: "right",
     bollard: { body: "#f2c14e", cap: null, band: "#1b1d21", shape: "reflector-post", notes: "Distinct yellow/black reflector posts on rural roads, quite different from Denmark's red post." },
     signs: { bg: "#3b6ea8", accent: "#ffffff", notes: "Blue directional signage; dense birch and pine forest is common on rural roads." },
     plates: { bg: "#ffffff", band: "#3b6ea8", notes: "Blue-edged plate band with 'S', white background, black text." },
@@ -111,7 +111,7 @@ const COUNTRIES = [
     confusedWith: ["norway", "finland", "denmark"]
   },
   {
-    id: "norway", name: "Norway", region: "Europe", driving: "right",
+    id: "norway", name: "Norway", code: "NO", region: "Europe", driving: "right",
     bollard: { body: "#f2c14e", cap: null, band: "#1b1d21", shape: "reflector-post", notes: "Similar reflector-post family to Sweden; terrain (fjords, tunnels, steep mountain roads) is the real differentiator." },
     signs: { bg: "#3b6ea8", accent: "#ffffff", notes: "Frequent tunnels and dramatic elevation change are a strong Norway signature versus flatter Sweden/Denmark." },
     plates: { bg: "#ffffff", band: null, notes: "White plate, black text, no blue EU band since Norway isn't in the EU." },
@@ -120,7 +120,7 @@ const COUNTRIES = [
     confusedWith: ["sweden", "denmark", "iceland"]
   },
   {
-    id: "finland", name: "Finland", region: "Europe", driving: "right",
+    id: "finland", name: "Finland", code: "FI", region: "Europe", driving: "right",
     bollard: { body: "#f5f5f0", cap: null, band: "#c1443c", shape: "cylindrical", notes: "Cylindrical white post shape stands out from the flatter posts used elsewhere in Scandinavia." },
     signs: { bg: "#3b6ea8", accent: "#ffffff", notes: "Bilingual Finnish/Swedish signage in coastal regions; dense uniform birch forest inland." },
     plates: { bg: "#ffffff", band: "#3b6ea8", notes: "White plate, blue EU strip with 'FIN', black text." },
@@ -129,7 +129,7 @@ const COUNTRIES = [
     confusedWith: ["sweden", "estonia"]
   },
   {
-    id: "croatia", name: "Croatia", region: "Europe", driving: "right",
+    id: "croatia", name: "Croatia", code: "HR", region: "Europe", driving: "right",
     bollard: { body: "#ffffff", cap: null, band: "#c1443c", shape: "flat-back", notes: "White front face, but the back of the bollard is distinctly white rather than the darker backs common elsewhere in the Balkans." },
     signs: { bg: "#3b6ea8", accent: "#ffffff", notes: "Blue directional signage; coastal roads have limestone terrain and Mediterranean vegetation." },
     plates: { bg: "#ffffff", band: "#3b6ea8", notes: "White plate, blue EU strip with 'HR', black text, city-code prefix." },
@@ -138,7 +138,7 @@ const COUNTRIES = [
     confusedWith: ["serbia", "slovenia", "bosnia"]
   },
   {
-    id: "serbia", name: "Serbia", region: "Europe", driving: "right",
+    id: "serbia", name: "Serbia", code: "RS", region: "Europe", driving: "right",
     bollard: { body: "#ffffff", cap: null, band: "#c1443c", shape: "offset", notes: "Red rectangle sits slightly off-centre on the reflector band, a small but noted distinguishing detail from Croatia." },
     signs: { bg: "#3b6ea8", accent: "#ffffff", notes: "Mixed Cyrillic and Latin signage is common — seeing Cyrillic at all is a strong Balkans-region narrower." },
     plates: { bg: "#ffffff", band: null, notes: "White plate, black text, no blue EU strip since Serbia isn't in the EU." },
@@ -147,7 +147,7 @@ const COUNTRIES = [
     confusedWith: ["croatia", "bosnia", "montenegro", "bulgaria", "north macedonia"]
   },
   {
-    id: "spain", name: "Spain", region: "Europe", driving: "right",
+    id: "spain", name: "Spain", code: "ES", region: "Europe", driving: "right",
     bollard: { body: "#f5f5f0", cap: null, band: "#c1443c", shape: "flat", notes: "Flat white post, red reflector; distinct mainly through colour context on the wider sign environment." },
     signs: { bg: "#ffffff", accent: "#c1443c", notes: "White background town signs with red border, and very orange/dry roadside vegetation inland." },
     plates: { bg: "#ffffff", band: "#3b6ea8", notes: "White plate, blue EU strip with 'E', black text, no city code (unlike most of Europe, Spanish plates are randomised)." },
@@ -156,7 +156,7 @@ const COUNTRIES = [
     confusedWith: ["portugal", "andorra"]
   },
   {
-    id: "portugal", name: "Portugal", region: "Europe", driving: "right",
+    id: "portugal", name: "Portugal", code: "PT", region: "Europe", driving: "right",
     bollard: { body: "#f5f5f0", cap: null, band: "#f2c14e", shape: "flat", notes: "Flat white post but with a yellow reflector band rather than Spain's red." },
     signs: { bg: "#ffffff", accent: "#1b1d21", notes: "Black-and-white cobblestone (calçada) pavement in towns is a distinctly Portuguese texture." },
     plates: { bg: "#ffffff", band: "#3b6ea8", notes: "White plate, blue EU strip with 'P', black text, dashes separating letter/number groups." },
@@ -165,7 +165,7 @@ const COUNTRIES = [
     confusedWith: ["spain", "brazil"]
   },
   {
-    id: "uk", name: "United Kingdom", region: "Europe", driving: "left",
+    id: "uk", name: "United Kingdom", code: "GB", region: "Europe", driving: "left",
     bollard: { body: "#1b1d21", cap: null, band: "#c1443c", shape: "wedge-rare", notes: "Bollards are comparatively rare; when present, black-and-white sections with a large red rectangle on top." },
     signs: { bg: "#3b6ea8", accent: "#ffffff", notes: "Blue motorway signage, roundabout-heavy junctions, and yellow grid-lines painted at some intersections." },
     plates: { bg: "#fadb2c", band: null, notes: "Yellow rear plate / white front plate, black text, no blue EU strip post-Brexit." },
@@ -174,7 +174,7 @@ const COUNTRIES = [
     confusedWith: ["ireland", "cyprus"]
   },
   {
-    id: "ireland", name: "Ireland", region: "Europe", driving: "left",
+    id: "ireland", name: "Ireland", code: "IE", region: "Europe", driving: "left",
     bollard: { body: "#1b1d21", cap: null, band: "#c1443c", shape: "wedge-rare", notes: "Similar sparse bollard usage to the UK; not a strong standalone differentiator." },
     signs: { bg: "#3b6ea8", accent: "#f2c14e", notes: "Distances in kilometres on green-background signs (vs the UK's miles on green/blue), and widespread bilingual Irish/English text." },
     plates: { bg: "#fadb2c", band: "#3b6ea8", notes: "Yellow plate, black text, but format includes a year-and-county code prefix distinct from UK plates." },
@@ -183,7 +183,7 @@ const COUNTRIES = [
     confusedWith: ["uk", "iceland"]
   },
   {
-    id: "hungary", name: "Hungary", region: "Europe", driving: "right",
+    id: "hungary", name: "Hungary", code: "HU", region: "Europe", driving: "right",
     bollard: { body: "#f5f5f0", cap: null, band: "#c1443c", shape: "flat", notes: "Flat white post, red reflector band positioned lower on the post than most neighbours." },
     signs: { bg: "#3b6ea8", accent: "#ffffff", notes: "Blue directional signage; flat plains (the Great Hungarian Plain) dominate outside Budapest." },
     plates: { bg: "#ffffff", band: "#3b6ea8", notes: "White plate, blue EU strip with 'H', black text." },
@@ -192,7 +192,7 @@ const COUNTRIES = [
     confusedWith: ["slovakia", "romania", "austria", "slovenia"]
   },
   {
-    id: "romania", name: "Romania", region: "Europe", driving: "right",
+    id: "romania", name: "Romania", code: "RO", region: "Europe", driving: "right",
     bollard: { body: "#f5f5f0", cap: null, band: "#c1443c", shape: "flat", notes: "Flat white/red post family shared with much of Central Europe — not a strong standalone clue." },
     signs: { bg: "#3b6ea8", accent: "#ffffff", notes: "Rougher rural road surfaces and horse-drawn cart use are still visible in many regions." },
     plates: { bg: "#ffffff", band: "#3b6ea8", notes: "White plate, blue EU strip with 'RO', black text, county-letter prefix." },
@@ -201,7 +201,7 @@ const COUNTRIES = [
     confusedWith: ["moldova", "bulgaria", "hungary"]
   },
   {
-    id: "bulgaria", name: "Bulgaria", region: "Europe", driving: "right",
+    id: "bulgaria", name: "Bulgaria", code: "BG", region: "Europe", driving: "right",
     bollard: { body: "#ffffff", cap: null, band: "#c1443c", shape: "flat", notes: "Front face carries a red rectangle; the back shows the same rectangle in white." },
     signs: { bg: "#3b6ea8", accent: "#ffffff", notes: "Cyrillic script on virtually all signage is the fastest regional narrower." },
     plates: { bg: "#ffffff", band: "#3b6ea8", notes: "White plate, blue EU strip with 'BG', black text." },
@@ -210,7 +210,7 @@ const COUNTRIES = [
     confusedWith: ["serbia", "north macedonia", "romania"]
   },
   {
-    id: "greece", name: "Greece", region: "Europe", driving: "right",
+    id: "greece", name: "Greece", code: "GR", region: "Europe", driving: "right",
     bollard: { body: "#f5f5f0", cap: null, band: "#c1443c", shape: "flat", notes: "Flat white/red post; bollards are secondary here to the very strong script clue." },
     signs: { bg: "#ffffff", accent: "#1b1d21", notes: "Bilingual Greek/Latin signage on major roads, with double yellow or white centre lines." },
     plates: { bg: "#ffffff", band: "#3b6ea8", notes: "White plate, blue EU strip with 'GR', black text." },
@@ -219,7 +219,7 @@ const COUNTRIES = [
     confusedWith: ["cyprus", "turkey"]
   },
   {
-    id: "turkey", name: "Turkey", region: "Europe/Asia", driving: "right",
+    id: "turkey", name: "Turkey", code: "TR", region: "Europe/Asia", driving: "right",
     bollard: { body: "#f5f5f0", cap: null, band: "#c1443c", shape: "thick-rect", notes: "Thicker rectangular reflector than most of Europe — often compared to Australia's bollard profile." },
     signs: { bg: "#3b6ea8", accent: "#ffffff", notes: "Blue directional signage; minarets and mosque architecture are a strong regional confirm in towns." },
     plates: { bg: "#ffffff", band: "#3b6ea8", notes: "White plate, blue strip with province code number (not a country letter), black text." },
@@ -228,7 +228,7 @@ const COUNTRIES = [
     confusedWith: ["greece"]
   },
   {
-    id: "russia", name: "Russia", region: "Europe/Asia", driving: "right",
+    id: "russia", name: "Russia", code: "RU", region: "Europe/Asia", driving: "right",
     bollard: { body: "#f5f5f0", cap: null, band: "#c1443c", shape: "flat", notes: "Simple flat white/red post; road quality and marking style vary widely by region." },
     signs: { bg: "#3b6ea8", accent: "#ffffff", notes: "Distinctive blue Google Street View camera watermark/car in many regions, plus Cyrillic road signage." },
     plates: { bg: "#ffffff", band: null, notes: "White plate, black text, region-code numbers after the letters, Russian tricolour flag graphic on the plate." },
@@ -237,7 +237,7 @@ const COUNTRIES = [
     confusedWith: ["belarus", "ukraine", "kazakhstan", "estonia"]
   },
   {
-    id: "ukraine", name: "Ukraine", region: "Europe", driving: "right",
+    id: "ukraine", name: "Ukraine", code: "UA", region: "Europe", driving: "right",
     bollard: { body: "#f5f5f0", cap: null, band: "#f2c14e", shape: "flat", notes: "Flat post family, often visibly weathered or damaged compared to neighbouring EU countries." },
     signs: { bg: "#3b6ea8", accent: "#ffffff", notes: "Cyrillic signage; road surfaces and infrastructure often show more wear than EU-member neighbours." },
     plates: { bg: "#ffffff", band: "#3b6ea8", notes: "White plate, blue strip with 'UA', black text — note the blue strip here is a national marker, not an EU one." },
@@ -246,7 +246,7 @@ const COUNTRIES = [
     confusedWith: ["russia", "belarus", "moldova"]
   },
   {
-    id: "australia", name: "Australia", region: "Oceania", driving: "left",
+    id: "australia", name: "Australia", code: "AU", region: "Oceania", driving: "left",
     bollard: { body: "#f5f5f0", cap: null, band: "#c1443c", shape: "thick-rect", notes: "Thick rectangular reflector similar in profile to Turkey's — rely on terrain/language to split." },
     signs: { bg: "#f2c14e", accent: "#1b1d21", notes: "Yellow diamond warning signs, wide unmarked shoulders, and very long straight rural roads." },
     plates: { bg: "#ffffff", band: null, notes: "State-issued plates vary by colour/format per state — a distinct look from the uniform EU system." },
@@ -255,7 +255,7 @@ const COUNTRIES = [
     confusedWith: ["new zealand", "south africa"]
   },
   {
-    id: "usa", name: "United States", region: "North America", driving: "right",
+    id: "usa", name: "United States", code: "US", region: "North America", driving: "right",
     bollard: { body: "#c1443c", cap: null, band: "#ffffff", shape: "sparse", notes: "Bollards are inconsistent/rare state-to-state — lean on other clues far more than in Europe." },
     signs: { bg: "#1b8a3b", accent: "#ffffff", notes: "Green highway signage with white text, yellow diamond warning signs, and wide painted yellow centre-lines." },
     plates: { bg: "#ffffff", band: null, notes: "Plate colour/format varies by state — a strong regional narrower once you learn a handful of state designs." },
@@ -264,7 +264,7 @@ const COUNTRIES = [
     confusedWith: ["canada"]
   },
   {
-    id: "brazil", name: "Brazil", region: "South America", driving: "right",
+    id: "brazil", name: "Brazil", code: "BR", region: "South America", driving: "right",
     bollard: { body: "#f2c14e", cap: null, band: "#1b1d21", shape: "sparse", notes: "Yellow-and-black hazard-style posts where present; not consistently used nationwide." },
     signs: { bg: "#1b8a3b", accent: "#ffffff", notes: "Green highway signage, red soil visible roadside in many inland regions." },
     plates: { bg: "#c1443c", band: null, notes: "Red lettering on white/silver plates in the older format, transitioning to Mercosul blue-striped plates." },
@@ -273,7 +273,7 @@ const COUNTRIES = [
     confusedWith: ["portugal", "argentina"]
   },
   {
-    id: "japan", name: "Japan", region: "Asia", driving: "left",
+    id: "japan", name: "Japan", code: "JP", region: "Asia", driving: "left",
     bollard: { body: "#f5f5f0", cap: null, band: "#f2c14e", shape: "reflector-post", notes: "Yellow-and-black striped reflector posts are common on rural roads." },
     signs: { bg: "#1b8a3b", accent: "#ffffff", notes: "Blue directional expressway signage, green rural highway signage, and utility poles lining almost every street." },
     plates: { bg: "#ffffff", band: null, notes: "Distinct plate shape/size versus Western countries, often with a regional name in kanji at the top." },
@@ -282,7 +282,7 @@ const COUNTRIES = [
     confusedWith: ["south korea", "taiwan"]
   },
   {
-    id: "slovenia", name: "Slovenia", region: "Europe", driving: "right",
+    id: "slovenia", name: "Slovenia", code: "SI", region: "Europe", driving: "right",
     bollard: { body: "#f5f5f0", cap: "#1b1d21", band: "#c1443c", shape: "flat", notes: "White flat post with a dark cap — close enough to Austria's that it is not a reliable split on its own." },
     signs: { bg: "#3b6ea8", accent: "#ffffff", notes: "Blue direction signs; town-centre information boards run darker than Austria's brighter blue." },
     plates: { bg: "#ffffff", band: "#3b6ea8", notes: "White plate, blue EU strip with 'SLO', black text, often a coloured regional sticker at the right." },
@@ -291,7 +291,7 @@ const COUNTRIES = [
     confusedWith: ["austria", "croatia", "hungary"]
   },
   {
-    id: "slovakia", name: "Slovakia", region: "Europe", driving: "right",
+    id: "slovakia", name: "Slovakia", code: "SK", region: "Europe", driving: "right",
     bollard: { body: "#f5f5f0", cap: "#1b1d21", band: "#c1443c", shape: "flat", notes: "White flat post with a black cap and red reflector — lacks Czechia's fluorescent orange reflector." },
     signs: { bg: "#ffffff", accent: "#1b1d21", notes: "Village signs are white with a red border, similar to Poland's but without the locator map corner." },
     plates: { bg: "#ffffff", band: "#3b6ea8", notes: "White plate, blue EU strip with 'SK', black text, two-letter district prefix." },
@@ -300,7 +300,7 @@ const COUNTRIES = [
     confusedWith: ["czechia", "hungary", "poland"]
   },
   {
-    id: "bosnia", name: "Bosnia and Herzegovina", region: "Europe", driving: "right",
+    id: "bosnia", name: "Bosnia and Herzegovina", code: "BA", region: "Europe", driving: "right",
     bollard: { body: "#f5f5f0", cap: null, band: "#c1443c", shape: "flat", notes: "Plain white flat post with a red reflector; deployment is patchy compared with Croatia." },
     signs: { bg: "#3b6ea8", accent: "#ffffff", notes: "Signage frequently carries both Latin and Cyrillic spellings of the same place name." },
     plates: { bg: "#ffffff", band: "#3b6ea8", notes: "White plate, blue strip with 'BIH', black text — deliberately neutral format with no entity marking." },
@@ -309,7 +309,7 @@ const COUNTRIES = [
     confusedWith: ["croatia", "serbia", "montenegro"]
   },
   {
-    id: "montenegro", name: "Montenegro", region: "Europe", driving: "right",
+    id: "montenegro", name: "Montenegro", code: "ME", region: "Europe", driving: "right",
     bollard: { body: "#f5f5f0", cap: null, band: "#c1443c", shape: "flat", notes: "White flat post with red reflector, shared with most of the western Balkans." },
     signs: { bg: "#3b6ea8", accent: "#ffffff", notes: "Blue direction signs; dramatic coastal and canyon terrain does more identifying work than the signage." },
     plates: { bg: "#ffffff", band: "#3b6ea8", notes: "White plate, blue strip with 'MNE', black text, city-code prefix." },
@@ -318,7 +318,7 @@ const COUNTRIES = [
     confusedWith: ["serbia", "bosnia", "albania"]
   },
   {
-    id: "north macedonia", name: "North Macedonia", region: "Europe", driving: "right",
+    id: "north macedonia", name: "North Macedonia", code: "MK", region: "Europe", driving: "right",
     bollard: { body: "#f5f5f0", cap: null, band: "#c1443c", shape: "flat", notes: "White flat post with a red reflector; sparse outside main routes." },
     signs: { bg: "#3b6ea8", accent: "#ffffff", notes: "Blue direction signs, commonly bilingual Macedonian Cyrillic and Albanian Latin in the west." },
     plates: { bg: "#ffffff", band: "#3b6ea8", notes: "White plate, blue strip with 'NMK', black text." },
@@ -327,7 +327,7 @@ const COUNTRIES = [
     confusedWith: ["bulgaria", "serbia", "albania"]
   },
   {
-    id: "luxembourg", name: "Luxembourg", region: "Europe", driving: "right",
+    id: "luxembourg", name: "Luxembourg", code: "LU", region: "Europe", driving: "right",
     bollard: { body: "#f5f5f0", cap: null, band: "#c1443c", shape: "flat-narrow", notes: "Narrow white post with a red reflector, essentially the Belgian pattern." },
     signs: { bg: "#3b6ea8", accent: "#ffffff", notes: "French-language signage with German alongside it, and Luxembourgish on local place names." },
     plates: { bg: "#fadb2c", band: "#3b6ea8", notes: "Yellow plate with black text and a blue EU strip with 'L' — yellow like the Netherlands, but on a smaller, squarer plate." },
@@ -336,7 +336,7 @@ const COUNTRIES = [
     confusedWith: ["belgium", "france", "germany"]
   },
   {
-    id: "liechtenstein", name: "Liechtenstein", region: "Europe", driving: "right",
+    id: "liechtenstein", name: "Liechtenstein", code: "LI", region: "Europe", driving: "right",
     bollard: { body: "#c1443c", cap: null, band: "#ffffff", shape: "domed", notes: "Swiss-style red domed post — the road furniture is effectively Switzerland's." },
     signs: { bg: "#ffffff", accent: "#c1443c", notes: "Swiss-pattern signage and immaculate road maintenance, in a very small Alpine valley." },
     plates: { bg: "#1b1d21", band: null, notes: "Black plate with white lettering and 'FL' — unmistakable and shared with no neighbour." },
@@ -345,7 +345,7 @@ const COUNTRIES = [
     confusedWith: ["switzerland", "austria"]
   },
   {
-    id: "monaco", name: "Monaco", region: "Europe", driving: "right",
+    id: "monaco", name: "Monaco", code: "MC", region: "Europe", driving: "right",
     bollard: { body: "#f5f5f0", cap: "#c1443c", band: "#c1443c", shape: "rounded", notes: "French-pattern rounded post where any exists — the territory is almost entirely urban." },
     signs: { bg: "#3b6ea8", accent: "#ffffff", notes: "French signage on a dense, immaculately maintained urban street grid stacked up a steep hillside." },
     plates: { bg: "#ffffff", band: null, notes: "White plate with black text and a red-and-white crest, no EU band — Monaco is not in the EU." },
@@ -354,7 +354,7 @@ const COUNTRIES = [
     confusedWith: ["france", "italy"]
   },
   {
-    id: "san marino", name: "San Marino", region: "Europe", driving: "right",
+    id: "san marino", name: "San Marino", code: "SM", region: "Europe", driving: "right",
     bollard: { body: "#1b1d21", cap: null, band: "#c1443c", shape: "wedge", notes: "Italian-pattern black wedge post — the road furniture is inherited wholesale from Italy." },
     signs: { bg: "#3b6ea8", accent: "#ffffff", notes: "Italian-style signage, but watch for the distinctive brown heritage signs around Monte Titano." },
     plates: { bg: "#ffffff", band: "#3b6ea8", notes: "White plate with a blue band carrying the coat of arms and 'RSM', black text." },
@@ -363,7 +363,7 @@ const COUNTRIES = [
     confusedWith: ["italy"]
   },
   {
-    id: "andorra", name: "Andorra", region: "Europe", driving: "right",
+    id: "andorra", name: "Andorra", code: "AD", region: "Europe", driving: "right",
     bollard: { body: "#f5f5f0", cap: null, band: "#c1443c", shape: "rounded", notes: "Rounded white post with red reflector, sitting between the French and Spanish patterns." },
     signs: { bg: "#3b6ea8", accent: "#ffffff", notes: "Catalan-language signage in a steep high-Pyrenean valley packed with retail and ski infrastructure." },
     plates: { bg: "#ffffff", band: null, notes: "White plate with black text and a small national crest, no EU band — Andorra is not in the EU." },
@@ -372,7 +372,7 @@ const COUNTRIES = [
     confusedWith: ["spain", "france"]
   },
   {
-    id: "iceland", name: "Iceland", region: "Europe", driving: "right",
+    id: "iceland", name: "Iceland", code: "IS", region: "Europe", driving: "right",
     bollard: { body: "#f2c14e", cap: null, band: "#1b1d21", shape: "reflector-post", notes: "Yellow-topped flexible marker posts line most rural roads, standing out against treeless terrain." },
     signs: { bg: "#3b6ea8", accent: "#ffffff", notes: "Blue direction signs, single-lane bridges marked 'Einbreið brú', and near-total absence of trees." },
     plates: { bg: "#ffffff", band: "#3b6ea8", notes: "White plate, blue strip with 'IS', black text — the strip is a national marker, not an EU band." },
@@ -381,7 +381,7 @@ const COUNTRIES = [
     confusedWith: ["norway", "ireland"]
   },
   {
-    id: "estonia", name: "Estonia", region: "Europe", driving: "right",
+    id: "estonia", name: "Estonia", code: "EE", region: "Europe", driving: "right",
     bollard: { body: "#f5f5f0", cap: null, band: "#c1443c", shape: "flat", notes: "White flat post with a red reflector, shared broadly across the Baltic states." },
     signs: { bg: "#3b6ea8", accent: "#ffffff", notes: "Blue direction signs; dense flat pine and birch forest dominates the roadside." },
     plates: { bg: "#ffffff", band: "#3b6ea8", notes: "White plate, blue EU strip with 'EST', black text." },
@@ -390,7 +390,7 @@ const COUNTRIES = [
     confusedWith: ["finland", "russia"]
   },
   {
-    id: "belarus", name: "Belarus", region: "Europe", driving: "right",
+    id: "belarus", name: "Belarus", code: "BY", region: "Europe", driving: "right",
     bollard: { body: "#f5f5f0", cap: null, band: "#c1443c", shape: "flat", notes: "White flat post with a red reflector, in the broad post-Soviet pattern." },
     signs: { bg: "#3b6ea8", accent: "#ffffff", notes: "Blue direction signs with very wide, well-maintained rural roads and long tree-lined avenues." },
     plates: { bg: "#ffffff", band: "#3b6ea8", notes: "White plate, blue strip with 'BY', black text, region-number prefix." },
@@ -399,7 +399,7 @@ const COUNTRIES = [
     confusedWith: ["russia", "ukraine"]
   },
   {
-    id: "moldova", name: "Moldova", region: "Europe", driving: "right",
+    id: "moldova", name: "Moldova", code: "MD", region: "Europe", driving: "right",
     bollard: { body: "#f5f5f0", cap: null, band: "#c1443c", shape: "flat", notes: "White flat post with a red reflector; frequently absent on smaller rural roads." },
     signs: { bg: "#3b6ea8", accent: "#ffffff", notes: "Blue direction signs, rolling vineyard country, and noticeably rougher surfacing than Romania." },
     plates: { bg: "#ffffff", band: "#3b6ea8", notes: "White plate, blue strip with 'MD', black text — the strip is a national marker, not an EU band." },
@@ -408,7 +408,7 @@ const COUNTRIES = [
     confusedWith: ["romania", "ukraine"]
   },
   {
-    id: "cyprus", name: "Cyprus", region: "Europe", driving: "left",
+    id: "cyprus", name: "Cyprus", code: "CY", region: "Europe", driving: "left",
     bollard: { body: "#f5f5f0", cap: null, band: "#c1443c", shape: "flat", notes: "White flat post with a red reflector; sparse, with kerbing more common than posts." },
     signs: { bg: "#3b6ea8", accent: "#ffffff", notes: "Bilingual Greek and English signage, with British-inherited road markings and roundabouts." },
     plates: { bg: "#fadb2c", band: "#3b6ea8", notes: "Yellow rear plate, white front, blue EU strip with 'CY' — the yellow is a British inheritance." },
@@ -417,7 +417,7 @@ const COUNTRIES = [
     confusedWith: ["greece", "uk"]
   },
   {
-    id: "kazakhstan", name: "Kazakhstan", region: "Europe/Asia", driving: "right",
+    id: "kazakhstan", name: "Kazakhstan", code: "KZ", region: "Europe/Asia", driving: "right",
     bollard: { body: "#f5f5f0", cap: null, band: "#c1443c", shape: "sparse", notes: "Posts appear only intermittently; vast stretches of road carry no markers at all." },
     signs: { bg: "#3b6ea8", accent: "#ffffff", notes: "Blue direction signs in Kazakh and Russian, over enormous flat, treeless steppe." },
     plates: { bg: "#ffffff", band: "#3b6ea8", notes: "White plate with a blue strip carrying the flag and 'KZ' on the right-hand edge, black text." },
@@ -426,7 +426,7 @@ const COUNTRIES = [
     confusedWith: ["russia"]
   },
   {
-    id: "canada", name: "Canada", region: "North America", driving: "right",
+    id: "canada", name: "Canada", code: "CA", region: "North America", driving: "right",
     bollard: { body: "#f2c14e", cap: null, band: "#1b1d21", shape: "sparse", notes: "Flexible delineator posts where present, largely matching US practice." },
     signs: { bg: "#1b8a3b", accent: "#ffffff", notes: "Green highway signage very like the US, but distances in kilometres and bilingual French in Québec and New Brunswick." },
     plates: { bg: "#ffffff", band: null, notes: "Province-issued plates varying in colour and format, with no front plate required in several provinces." },
@@ -435,7 +435,7 @@ const COUNTRIES = [
     confusedWith: ["usa"]
   },
   {
-    id: "argentina", name: "Argentina", region: "South America", driving: "right",
+    id: "argentina", name: "Argentina", code: "AR", region: "South America", driving: "right",
     bollard: { body: "#f5f5f0", cap: null, band: "#c1443c", shape: "sparse", notes: "Occasional white posts with red reflectors; long rural stretches carry none." },
     signs: { bg: "#3b6ea8", accent: "#ffffff", notes: "Blue direction signs, and dead-straight pampas roads lined with poplar windbreaks." },
     plates: { bg: "#ffffff", band: null, notes: "Mercosur plates with a blue strip across the top carrying 'ARGENTINA', replacing the older black-on-white format." },
@@ -444,7 +444,7 @@ const COUNTRIES = [
     confusedWith: ["brazil"]
   },
   {
-    id: "new zealand", name: "New Zealand", region: "Oceania", driving: "left",
+    id: "new zealand", name: "New Zealand", code: "NZ", region: "Oceania", driving: "left",
     bollard: { body: "#f5f5f0", cap: null, band: "#f2c14e", shape: "reflector-post", notes: "White marker posts with yellow or white reflectors along rural highways." },
     signs: { bg: "#1b8a3b", accent: "#ffffff", notes: "Green highway signage, one-lane bridges, and a distinct absence of Australia's yellow diamond animal warnings." },
     plates: { bg: "#ffffff", band: null, notes: "White plate with black text; a single national format rather than Australia's per-state variety." },
@@ -453,7 +453,7 @@ const COUNTRIES = [
     confusedWith: ["australia"]
   },
   {
-    id: "south africa", name: "South Africa", region: "Africa", driving: "left",
+    id: "south africa", name: "South Africa", code: "ZA", region: "Africa", driving: "left",
     bollard: { body: "#f5f5f0", cap: null, band: "#c1443c", shape: "sparse", notes: "Marker posts are inconsistent; painted kerbs and cable barriers do more of the work." },
     signs: { bg: "#3b6ea8", accent: "#ffffff", notes: "Blue direction signs with distinctive yellow-bordered route markers, plus frequent roadside fencing." },
     plates: { bg: "#ffffff", band: null, notes: "Province-issued plates in varying formats; several provinces use a yellow background." },
@@ -462,7 +462,7 @@ const COUNTRIES = [
     confusedWith: ["australia"]
   },
   {
-    id: "south korea", name: "South Korea", region: "Asia", driving: "right",
+    id: "south korea", name: "South Korea", code: "KR", region: "Asia", driving: "right",
     bollard: { body: "#f5f5f0", cap: null, band: "#1b8a3b", shape: "reflector-post", notes: "Slim posts with green or yellow reflectors; guardrails are often painted green." },
     signs: { bg: "#1b8a3b", accent: "#ffffff", notes: "Green highway signage with Hangul and English, and blue signs on urban arterials." },
     plates: { bg: "#ffffff", band: null, notes: "White plate with black Hangul and numerals, wider than the Japanese format." },
@@ -471,7 +471,7 @@ const COUNTRIES = [
     confusedWith: ["japan", "taiwan"]
   },
   {
-    id: "taiwan", name: "Taiwan", region: "Asia", driving: "right",
+    id: "taiwan", name: "Taiwan", code: "TW", region: "Asia", driving: "right",
     bollard: { body: "#f5f5f0", cap: null, band: "#c1443c", shape: "sparse", notes: "Posts are uncommon; painted kerbs and dense scooter-lane markings dominate instead." },
     signs: { bg: "#1b8a3b", accent: "#ffffff", notes: "Green and blue signage in Traditional Chinese with English, plus dedicated scooter waiting boxes at junctions." },
     plates: { bg: "#ffffff", band: null, notes: "White plate with black text, often a shorter format than mainland Chinese plates." },
