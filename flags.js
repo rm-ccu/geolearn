@@ -16,14 +16,27 @@
 // width / height of the checked-in image for each country, so the <img> can carry
 // both dimensions up front and nothing reflows as the flags decode.
 const FLAG_RATIO = {
-  AD: 1.429, AL: 1.404, AR: 1.6,   AT: 1.495, AU: 2,     BA: 2,     BE: 1.151,
-  BG: 1.667, BR: 1.429, BY: 2,     CA: 2,     CH: 1,     CY: 1.495, CZ: 1.495,
-  DE: 1.667, DK: 1.322, EE: 1.569, ES: 1.495, FI: 1.633, FR: 1.495, GB: 2,
-  GR: 1.495, HR: 2,     HU: 2,     IE: 2,     IS: 1.391, IT: 1.495, JP: 1.495,
-  KR: 1.495, KZ: 2,     LI: 1.667, LU: 1.667, MC: 1.25,  MD: 2,     ME: 2,
-  MK: 2,     NL: 1.495, NO: 1.379, NZ: 2,     PL: 1.6,   PT: 1.495, RO: 1.495,
-  RS: 1.495, RU: 1.495, SE: 1.6,   SI: 2,     SK: 1.495, SM: 1.333, TR: 1.495,
-  TW: 1.495, UA: 1.495, US: 1.905, ZA: 1.495,
+  AD: 1.429,   AE: 2.0,     AL: 1.404,   AR: 1.6,     AS: 2.0,     AT: 1.495,
+  AU: 2.0,     AX: 1.524,   BA: 2.0,     BD: 1.667,   BE: 1.151,   BG: 1.667,
+  BM: 2.0,     BO: 1.468,   BR: 1.429,   BT: 1.495,   BW: 1.495,   BY: 2.0,
+  CA: 2.0,     CC: 2.0,     CH: 1.0,     CL: 1.495,   CO: 1.495,   CR: 1.667,
+  CW: 1.495,   CX: 2.0,     CY: 1.495,   CZ: 1.495,   DE: 1.667,   DK: 1.322,
+  DO: 1.495,   EC: 1.495,   EE: 1.569,   ES: 1.495,   FI: 1.633,   FO: 1.379,
+  FR: 1.495,   GB: 2.0,     GE: 1.495,   GH: 1.495,   GI: 2.0,     GL: 1.495,
+  GR: 1.495,   GT: 1.6,     GU: 1.86,    HK: 1.495,   HR: 2.0,     HU: 2.0,
+  ID: 1.495,   IE: 2.0,     IL: 1.379,   IM: 2.0,     IN: 1.495,   IS: 1.391,
+  IT: 1.495,   JE: 1.667,   JO: 2.0,     JP: 1.495,   KE: 1.495,   KG: 1.667,
+  KH: 1.569,   KR: 1.495,   KZ: 2.0,     LA: 1.495,   LB: 1.495,   LI: 1.667,
+  LK: 2.0,     LS: 1.495,   LT: 1.667,   LU: 1.667,   LV: 2.0,     MC: 1.25,
+  MD: 2.0,     ME: 2.0,     MK: 2.0,     MN: 2.0,     MO: 1.495,   MP: 2.0,
+  MT: 1.495,   MX: 1.758,   MY: 2.0,     NA: 1.495,   NG: 2.0,     NL: 1.495,
+  NO: 1.379,   NP: 0.821,   NZ: 2.0,     OM: 1.758,   PA: 1.495,   PE: 1.495,
+  PH: 2.0,     PL: 1.6,     PN: 2.0,     PR: 1.495,   PS: 2.0,     PT: 1.495,
+  QA: 2.54,    RE: 1.495,   RO: 1.495,   RS: 1.495,   RU: 1.495,   RW: 1.495,
+  SE: 1.6,     SG: 1.495,   SI: 2.0,     SJ: 1.379,   SK: 1.495,   SM: 1.333,
+  SN: 1.495,   ST: 2.0,     SZ: 1.495,   TH: 1.495,   TN: 1.495,   TR: 1.495,
+  TW: 1.495,   UA: 1.495,   UG: 1.495,   US: 1.905,   UY: 1.495,   VI: 1.495,
+  VN: 1.495,   ZA: 1.495,
 };
 
 // Stand-in for a country added to data.js before its flag lands in flags/.

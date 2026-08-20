@@ -24,6 +24,8 @@ const ALIAS = {
   "united states": "United States of America",
   "bosnia and herzegovina": "Bosnia and Herz.",
   "north macedonia": "Macedonia",
+  "dominican republic": "Dominican Rep.",
+  "eswatini": "eSwatini",
 };
 
 // Countries too small to survive 110m generalisation — they get marker dots.
@@ -32,6 +34,28 @@ const DOTS = {
   monaco: [7.42, 43.74],
   "san marino": [12.46, 43.94],
   andorra: [1.52, 42.51],
+  malta: [14.44, 35.9],
+  "åland islands": [19.95, 60.18],
+  "faroe islands": [-6.91, 62.01],
+  gibraltar: [-5.35, 36.14],
+  "isle of man": [-4.55, 54.24],
+  jersey: [-2.11, 49.21],
+  "svalbard and jan mayen": [15.65, 78.22],
+  singapore: [103.82, 1.35],
+  "hong kong": [114.17, 22.32],
+  macau: [113.55, 22.2],
+  "akrotiri and dhekelia": [33, 34.62],
+  "christmas island": [105.68, -10.45],
+  "cocos (keeling) islands": [96.87, -12.17],
+  "são tomé and príncipe": [6.73, 0.34],
+  réunion: [55.54, -21.11],
+  "united states virgin islands": [-64.9, 18.34],
+  curaçao: [-68.99, 12.17],
+  bermuda: [-64.75, 32.31],
+  guam: [144.79, 13.44],
+  "northern mariana islands": [145.75, 15.19],
+  "american samoa": [-170.7, -14.31],
+  "pitcairn islands": [-130.1, -25.07],
 };
 
 function decodeArcs(topo) {

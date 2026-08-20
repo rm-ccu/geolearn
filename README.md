@@ -7,7 +7,10 @@ A country-clue reference and compare tool for [GeoGuessr](https://www.geoguessr.
 GeoLearn collects the small visual tells that identify a country in Street View — which
 side of the road traffic drives on, bollard shapes, road-sign styling, licence-plate
 colours, script and language, plus the countries it's most often mixed up with — and lets
-you look them up or compare them side by side. **53 countries** are covered so far.
+you look them up or compare them side by side. **All 123 places with public Google Street
+View coverage** are in the dataset — every country GeoGuessr can drop you in, plus the
+territories that play as their own place (Hong Kong, Macau, Puerto Rico, the Faroes,
+Réunion, Guam and the rest).
 
 It's a **static site with no build step and no framework**: plain HTML, CSS, and
 JavaScript. Nothing to install, nothing to compile. (One generated file, `globe-data.js`,
@@ -26,7 +29,7 @@ geolearn/
 ├── globe.js        # The globe itself: projection, drawing, hit-testing, gestures
 ├── flights.js      # The ambient flight-tracker background (see "The background")
 ├── flags.js        # Flag <img> renderer + the per-flag aspect ratios
-├── flags/          # The 53 real flag images (PNG, public domain)
+├── flags/          # The 122 real flag images (PNG, public domain)
 ├── app.js          # Renders the views, owns the state object, draws the SVG swatches
 ├── tools/
 │   └── build-globe-data.js   # Regenerates globe-data.js (not part of the page)
@@ -60,8 +63,8 @@ page:
   empty outlines that say "not in the guide yet" on hover. Brightness carries the rest of
   the state — the others in the selected country's region are filled brighter (the visual
   echo of the filtered list), and the selected country itself is solid white with a glow.
-- Typing in the search box overrides the region scope, so a search always covers all 53
-  countries rather than silently searching inside one continent.
+- Typing in the search box overrides the region scope, so a search always covers all 123
+  entries rather than silently searching inside one continent.
 - Each card carries the country's **flag and ccTLD** next to the bollard — `.ch`, `.ru`,
   `.at`. The domain suffix is a real clue in its own right: it turns up on vans, shopfronts
   and billboards long before you find a road sign.
@@ -77,12 +80,47 @@ image assets.
 
 ---
 
+## What counts as covered
+
+The country list is every entry in Wikipedia's [Google Street View
+coverage](https://en.wikipedia.org/wiki/Google_Street_View_coverage) table that is marked
+as having **public** Street View — 122 places as of August 2026 — which is the same set
+GeoGuessr can drop you into.
+
+That deliberately includes two kinds of entry a stricter list would drop:
+
+- **Dependent territories that play as their own place.** Hong Kong, Macau, Puerto Rico,
+  the US Virgin Islands, Bermuda, Curaçao, Greenland, the Faroes, Åland, Svalbard,
+  Gibraltar, Jersey, the Isle of Man, Réunion, Guam, the Northern Marianas, American
+  Samoa, Palestine. Their tells are nothing like their parent country's — the USVI drives
+  on the left with American plates, Macau pairs Portuguese with Chinese.
+- **Landmark-only coverage** you will almost never get in a round: Qatar, Lebanon, Oman,
+  Jordan, São Tomé and Príncipe, Akrotiri and Dhekelia, Christmas Island, the Cocos
+  (Keeling) Islands, Pitcairn. They are in for completeness.
+
+Places with only photospheres or business interiors are **out**: China, Pakistan, Egypt,
+Paraguay, Tanzania, Madagascar, Iraq, Mali, Afghanistan, Antarctica and the rest of that
+list. Two footnotes on the edges:
+
+- **Moldova** predates this list and has no official coverage; its entry is kept and says
+  so in the key tip.
+- **Akrotiri and Dhekelia** has no ISO code of its own, so it carries `GB` — which means
+  it shows the Union Flag and a `.uk` chip. It is a British base area on Cyprus; if you
+  land there, guessing Cyprus costs you almost nothing.
+
+`region` is used to scope the list when you pick a country, so it is coarse on purpose:
+Europe, Europe/Asia, Asia, Africa, North America, Central America, Caribbean, South
+America, Oceania.
+
+---
+
 ## Flags
 
 `flags/` holds the real flag of every country in the dataset — public domain artwork from
 [flagcdn.com](https://flagcdn.com), rasterised to 160px wide and checked in, so the page
-still makes no third-party requests and still works from `file://`. All 53 together are
-about 210 KB.
+still makes no third-party requests and still works from `file://`. All 122 together are
+about 490 KB. (122, not 123: the Akrotiri and Dhekelia entry flies the Union Flag, so it
+reuses the UK's file.)
 
 This is the third version. Emoji came first and were dropped: Windows ships no flag glyphs
 at all, so a third of visitors saw two boxed letters. Hand-drawn SVG specs came second —
@@ -174,9 +212,10 @@ to ship inline:
 - Douglas-Peucker simplified at 0.28°, coordinates rounded to 2 decimals
 
 That leaves ~5,000 points in ~70 KB, which draws at 60 fps. Each entry also carries `g`,
-the matching `COUNTRIES` id, so `globe.js` knows which countries are clickable — the four
-countries too small to survive simplification (Andorra, Liechtenstein, Monaco, San Marino)
-are listed separately in `WORLD_DOTS` and drawn as marker dots instead.
+the matching `COUNTRIES` id, so `globe.js` knows which countries are clickable — the
+entries too small to survive simplification (the European microstates, Malta, Singapore,
+Hong Kong, Macau, and the island territories from the Faroes to Pitcairn) are listed
+separately in `WORLD_DOTS` and drawn as marker dots instead.
 
 **When you add a country to `data.js`, regenerate `globe-data.js`** so the new country
 becomes clickable on the globe:
@@ -190,8 +229,8 @@ matches Natural Earth's `properties.name` against the `name` field in `data.js`;
 spellings don't always agree (`United States of America`, `Bosnia and Herz.`, `Macedonia`),
 so a small `ALIAS` table at the top of the script covers the differences. If a country
 matches nothing the script tells you which one and stops, rather than quietly shipping a
-globe you can't click. Countries too small to survive simplification go in its `DOTS`
-table instead.
+globe you can't click. Anything with no 1:110m outline at all — Singapore, Malta, Macau,
+most of the island territories — goes in its `DOTS` table with a lon/lat instead.
 
 `globe.js` itself has no dependencies. It projects orthographically — `lambda` spins about
 the polar axis, `phi` tilts, and the centre of the disc is always
@@ -242,10 +281,14 @@ Then visit the URL it prints — usually <http://localhost:3000> for `serve` or
 ## Adding a new country
 
 Every country is one object in the `COUNTRIES` array in `data.js`. Add an entry and reload
-— there is nothing else to register or import, with one exception: the flag is a real
-image, so drop `flags/xx.png` in alongside it (`curl -o flags/pt.png https://flagcdn.com/w160/pt.png`)
-and add its width/height to `FLAG_RATIO` in `flags.js`. Skip that and the card renders a
-`?` placeholder; everything else still works.
+— nothing else to register or import — plus two side files:
+
+1. **The flag.** `curl -o flags/pt.png https://flagcdn.com/w160/pt.png`, then add the
+   image's width/height to `FLAG_RATIO` in `flags.js`. Skip it and the card renders a `?`
+   placeholder; everything else still works.
+2. **The globe.** `node tools/build-globe-data.js`, adding an `ALIAS` or `DOTS` entry if it
+   tells you the name matched no outline. Skip it and the country is in the list but not
+   clickable on the globe.
 
 The colour fields are real hex colours: `app.js` draws the little bollard, sign, and plate
 swatches from them at runtime, so they need to be valid CSS colours, not names.
