@@ -381,7 +381,7 @@ nav.tabs button:not(.active):hover {
 }
 
 .diff-row.is-diff {
-  box-shadow: 0 0 0 1px var(--bollard-red);
+  box-shadow: 0 0 0 1px var(--lane-yellow);
 }
 
 .diff-cell {
@@ -417,9 +417,6 @@ nav.tabs button:not(.active):hover {
 
 .legend-swatch { display: inline-flex; align-items: center; gap: 6px; }
 .legend-dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
-
-.swatch-row { display: flex; gap: 24px; margin-bottom: 22px; }
-.swatch-col { flex: 1; display: flex; align-items: center; justify-content: center; padding: 22px 0; background: var(--surface); border-radius: var(--radius); border: 1px solid var(--line); }
 
 footer.foot {
   text-align: center;

@@ -7,7 +7,7 @@ A country-clue reference and compare tool for [GeoGuessr](https://www.geoguessr.
 GeoLearn collects the small visual tells that identify a country in Street View — which
 side of the road traffic drives on, bollard shapes, road-sign styling, licence-plate
 colours, script and language, plus the countries it's most often mixed up with — and lets
-you look them up or compare them side by side.
+you look them up or compare them side by side. **53 countries** are covered so far.
 
 It's a **static site with no build step and no framework**: plain HTML, CSS, and
 JavaScript. Nothing to install, nothing to compile.
@@ -103,7 +103,7 @@ swatches from them at runtime, so they need to be valid CSS colours, not names.
 | --- | --- | --- |
 | `id` | `string` | Unique lowercase slug. Used for lookups and referenced by other entries' `confusedWith`, so it must stay unique and stable. |
 | `name` | `string` | Display name shown in the UI. |
-| `region` | `string` | Grouping used to build the region filter buttons. A new value automatically adds a new filter button, so reuse an existing one unless you mean to add a category. Currently: `Europe`, `Europe/Asia`, `Asia`, `Oceania`, `North America`, `South America`. |
+| `region` | `string` | Grouping used to build the region filter buttons. A new value automatically adds a new filter button, so reuse an existing one unless you mean to add a category. Currently: `Europe`, `Europe/Asia`, `Asia`, `Africa`, `Oceania`, `North America`, `South America`. |
 | `driving` | `"left"` \| `"right"` | Which side traffic drives on. Rendered as the LEFT/RIGHT tag on each card. |
 | `bollard` | `object` | See below. |
 | `signs` | `object` | See below. |
@@ -119,13 +119,16 @@ swatches from them at runtime, so they need to be valid CSS colours, not names.
 | `body` | hex | Main post colour. |
 | `cap` | hex or `null` | Colour of the cap block at the top. Use `null` for no cap — the key must be present either way. |
 | `band` | hex | Reflector band colour. |
-| `shape` | `string` | Free-text shape label (`flat`, `domed`, `wedge`, `cylindrical`, …). **Currently used only to decide whether two bollards count as "different" in the compare view — it does not change how the SVG is drawn.** |
+| `shape` | `string` | Selects the silhouette drawn by `bollardGeometry()` in `app.js`. Must be one of the 13 known values: `flat`, `flat-narrow`, `thick-rect`, `flat-back`, `offset`, `domed`, `rounded`, `rounded-wrap`, `cylindrical`, `wedge`, `wedge-rare`, `reflector-post`, `sparse`. An unrecognised value silently falls back to `flat`, so add a `case` to `bollardGeometry()` before inventing a new label. |
 | `notes` | `string` | Prose description shown under the swatch. |
 
 **`signs`** — `bg` (hex background), `accent` (hex for the bar across the swatch), `notes` (prose).
 
-**`plates`** — `bg` (hex plate background), `notes` (prose). Note the blue side band in the
-plate swatch is currently hardcoded and drawn for every country, EU or not.
+**`plates`** — `bg` (hex plate background), `band` (hex for the vertical side band, or
+`null` for none), `notes` (prose). Use `null` for countries with no side band at all
+(Switzerland, USA, Japan, Norway, UK…). The convention is that `band` represents a
+*vertical* side stripe; where a country's stripe runs across the top instead (Mercosur
+plates in Brazil and Argentina), leave `band: null` and describe it in `notes`.
 
 **`language`** — `script` (e.g. `"Latin"`, `"Cyrillic"`, `"Kanji/Kana"`; shown in monospace
 and diffed in the compare view) and `notes` (prose).
@@ -135,12 +138,13 @@ and diffed in the compare view) and `notes` (prose).
 - **Keep `id` stable.** Other entries point at it through `confusedWith`; renaming an `id`
   silently orphans those links.
 - **Prefer ids that already exist.** A `confusedWith` id with no matching entry renders as a
-  dimmed, non-clickable chip — it shows up in the UI as a "not added yet" placeholder rather
-  than breaking, but it can't be compared against.
+  dimmed, non-clickable chip — a visible "not added yet" placeholder rather than a crash, but
+  it can't be compared against. The dataset currently has none of these; keep it that way.
 - **Make `confusedWith` mutual.** If Portugal lists Spain, Spain should list Portugal, or the
   shortcut only appears from one side.
-- **Always include every key**, including `bollard.cap: null`. The SVG helpers read these
-  directly and a missing key renders wrong rather than erroring loudly.
+- **Always include every key**, including `bollard.cap: null` and `plates.band: null`. The
+  SVG helpers read these directly, and a missing key renders wrong rather than erroring
+  loudly.
 - **Mind the commas** between objects — a stray or missing one is a syntax error that stops
   `data.js` loading entirely, which shows up as a completely blank page.
 
