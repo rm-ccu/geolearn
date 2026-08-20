@@ -1,0 +1,38 @@
+# --- macOS ---
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# --- Editors / IDEs ---
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+.idea/
+*.swp
+*.swo
+*~
+
+# --- Node (only if you later add tooling; no build step today) ---
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.npm/
+
+# --- Env / secrets ---
+.env
+.env.local
+.env.*.local
+
+# --- Deploy / host artifacts ---
+.netlify/
+.vercel/
+.cache/
+dist/
+build/
+
+# --- Logs & misc ---
+*.log
+.tmp/

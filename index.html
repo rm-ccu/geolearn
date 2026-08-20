@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GeoLearn — the compare-first GeoGuessr clue reference</title>
+<meta name="description" content="Browse GeoGuessr identification clues by country, or compare two countries side by side to see exactly what differs.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2040%2040%22%3E%3Crect%20width%3D%2240%22%20height%3D%2240%22%20rx%3D%228%22%20fill%3D%22%231b1d21%22%2F%3E%3Crect%20x%3D%2216%22%20y%3D%224%22%20width%3D%228%22%20height%3D%2226%22%20rx%3D%222%22%20fill%3D%22%23f5f5f0%22%2F%3E%3Crect%20x%3D%2216%22%20y%3D%2216%22%20width%3D%228%22%20height%3D%226%22%20fill%3D%22%23c1443c%22%2F%3E%3Crect%20x%3D%226%22%20y%3D%2232%22%20width%3D%2228%22%20height%3D%224%22%20rx%3D%222%22%20fill%3D%22%23f2c14e%22%20opacity%3D%220.5%22%2F%3E%3C%2Fsvg%3E">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="top">
+  <div class="inner">
+    <div class="brand">
+      <svg class="brand-mark" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+        <rect x="16" y="4" width="8" height="26" rx="2" fill="#f5f5f0"/>
+        <rect x="16" y="16" width="8" height="6" fill="#c1443c"/>
+        <rect x="6" y="32" width="28" height="4" rx="2" fill="#f2c14e" opacity="0.5"/>
+      </svg>
+      <div>
+        <h1>GeoLearn</h1>
+        <div class="sub">Stop memorizing. Start diffing.</div>
+      </div>
+    </div>
+    <nav class="tabs">
+      <button data-view="browse" class="active">Browse</button>
+      <button data-view="compare">Compare</button>
+    </nav>
+  </div>
+</header>
+
+<div class="shell">
+
+  <!-- BROWSE -->
+  <section id="view-browse" class="view active">
+    <div class="browse-controls">
+      <input id="searchInput" class="search-input" type="text" placeholder="Search a country&hellip;">
+    </div>
+    <div id="regionFilter" class="region-filter" style="margin-bottom:20px;"></div>
+    <div id="grid" class="grid"></div>
+  </section>
+
+  <!-- DETAIL -->
+  <section id="view-detail" class="view">
+    <div id="detailContent"></div>
+  </section>
+
+  <!-- COMPARE -->
+  <section id="view-compare" class="view">
+    <div class="compare-pickers">
+      <div class="picker left">
+        <select id="selectLeft"></select>
+      </div>
+      <div class="vs-mark">VS</div>
+      <div class="picker right">
+        <select id="selectRight"></select>
+      </div>
+    </div>
+    <div id="compareOutput"></div>
+  </section>
+
+</div>
+
+<footer class="foot">
+  GeoLearn is a fan-made study reference for GeoGuessr players. Clue data is community-sourced &mdash; extend <span class="mono">data.js</span> to add more countries.
+</footer>
+
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
