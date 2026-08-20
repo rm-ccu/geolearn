@@ -153,6 +153,17 @@ function plateSwatch(c, size = 64) {
 const TLD_EXCEPTIONS = { GB: "uk" };
 const ccTLD = (code) => "." + (TLD_EXCEPTIONS[code] || code.toLowerCase());
 
+// ---------- Coverage ----------
+
+// Whether Google's cars have actually driven the country, or whether the only
+// panoramas are user-uploaded photospheres. A standard game can't drop you in a
+// photosphere-only country, so it is worth saying so on the card.
+const isPhoto = (c) => c.coverage === "photospheres";
+const coverageLabel = (c) => isPhoto(c) ? "photospheres only" : "official coverage";
+const coverageTag = (c) => isPhoto(c)
+  ? `<span class="cov-tag" title="No official Street View coverage — only user-uploaded photospheres">PHOTO</span>`
+  : "";
+
 // ---------- State ----------
 
 let state = {
@@ -217,6 +228,7 @@ function renderGrid() {
       <div class="name-row">
         <h3>${c.name}</h3>
         <span class="side-tag">${c.driving === "left" ? "LEFT" : "RIGHT"}</span>
+        ${coverageTag(c)}
       </div>
       <div class="card-mid">
         ${bollardSVG(c, 48)}
@@ -316,7 +328,7 @@ function renderDetailPanel() {
     <div class="detail-header">
       <div class="detail-title">
         <h2>${flagImg(c.code, c.name, 26)} ${c.name}</h2>
-        <span class="side-tag">${ccTLD(c.code)} &middot; ${c.region} &middot; drives on the ${c.driving}</span>
+        <span class="side-tag">${ccTLD(c.code)} &middot; ${c.region} &middot; drives on the ${c.driving} &middot; ${coverageLabel(c)}</span>
       </div>
       <button type="button" class="close-btn" id="closeDetail" aria-label="Close ${c.name}">&times;</button>
     </div>
@@ -435,6 +447,13 @@ function renderCompare() {
     </div>
 
     ${fieldRow("Driving side", a.driving.toUpperCase(), b.driving.toUpperCase(), "", "", drivingDiff)}
+
+    ${fieldRow("Coverage",
+      isPhoto(a) ? "PHOTOSPHERES" : "OFFICIAL",
+      isPhoto(b) ? "PHOTOSPHERES" : "OFFICIAL",
+      isPhoto(a) ? "No Street View car has driven here." : "Drivable Street View coverage.",
+      isPhoto(b) ? "No Street View car has driven here." : "Drivable Street View coverage.",
+      a.coverage !== b.coverage)}
 
     <div class="diff-row ${bollardShapeDiff ? 'is-diff' : 'is-same'}">
       <div class="diff-cell">

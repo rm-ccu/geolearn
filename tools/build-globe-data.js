@@ -26,6 +26,13 @@ const ALIAS = {
   "north macedonia": "Macedonia",
   "dominican republic": "Dominican Rep.",
   "eswatini": "eSwatini",
+  "central african republic": "Central African Rep.",
+  "republic of the congo": "Congo",
+  "dr congo": "Dem. Rep. Congo",
+  "equatorial guinea": "Eq. Guinea",
+  "south sudan": "S. Sudan",
+  "solomon islands": "Solomon Is.",
+  "côte d'ivoire": "Côte d'Ivoire",
 };
 
 // Countries too small to survive 110m generalisation — they get marker dots.
@@ -56,6 +63,28 @@ const DOTS = {
   "northern mariana islands": [145.75, 15.19],
   "american samoa": [-170.7, -14.31],
   "pitcairn islands": [-130.1, -25.07],
+  bahrain: [50.55, 26.07],
+  maldives: [73.51, 4.18],
+  "vatican city": [12.45, 41.9],
+  "cape verde": [-23.6, 15.5],
+  mauritius: [57.55, -20.28],
+  seychelles: [55.45, -4.62],
+  comoros: [43.33, -11.7],
+  barbados: [-59.54, 13.19],
+  "antigua and barbuda": [-61.8, 17.12],
+  "saint kitts and nevis": [-62.73, 17.3],
+  "saint lucia": [-60.98, 13.9],
+  "saint vincent and the grenadines": [-61.2, 13.25],
+  grenada: [-61.68, 12.11],
+  dominica: [-61.37, 15.41],
+  samoa: [-172.1, -13.76],
+  tonga: [-175.2, -21.14],
+  kiribati: [172.98, 1.35],
+  tuvalu: [179.2, -8.52],
+  nauru: [166.93, -0.53],
+  palau: [134.58, 7.5],
+  "marshall islands": [171.19, 7.09],
+  micronesia: [158.21, 6.92],
 };
 
 function decodeArcs(topo) {

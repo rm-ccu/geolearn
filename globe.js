@@ -23,6 +23,8 @@ const GLOBE_COLORS = {
   landEdge:     W_(0.26),    // countries with no entry in data.js: outline only
   coveredFill:  W_(0.15),
   coveredEdge:  W_(0.55),
+  photoFill:    W_(0.06),   // in the guide, but photospheres only — no car has driven it
+  photoEdge:    W_(0.34),
   peerFill:     W_(0.3),    // same region as the selection
   peerEdge:     W_(0.85),
   hoverFill:    W_(0.55),
@@ -39,6 +41,14 @@ function createGlobe(canvas, opts = {}) {
   const onGesture = opts.onGesture || (() => {});
 
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // Ids whose only panoramas are user photospheres, read straight off data.js so
+  // the globe doesn't need its own copy of the coverage state.
+  const photoOnly = new Set(
+    (typeof COUNTRIES === "undefined" ? [] : COUNTRIES)
+      .filter(c => c.coverage === "photospheres")
+      .map(c => c.id)
+  );
 
   // ---------- Geometry prep ----------
   // Rings arrive as flat [lon,lat,...] degrees. Unit vectors are precomputed once
@@ -262,12 +272,15 @@ function createGlobe(canvas, opts = {}) {
   }
 
   // [fill, edge, lineWidth, glow]. A null fill is what makes a country read as
-  // uncovered: it stays an empty outline while the ones in the guide are solid.
+  // absent from the guide: it stays an empty outline while entries are solid.
+  // Photosphere-only countries sit between the two — filled, but barely, because
+  // a standard game will never drop you there.
   function colorsFor(s) {
     const C = GLOBE_COLORS;
     if (s.id && s.id === selectedId) return [C.selectedFill, C.selectedEdge, 1.5, 18];
     if (s.id && s.id === hoverId) return [C.hoverFill, C.hoverEdge, 1.3, 12];
     if (s.id && peerIds.has(s.id)) return [C.peerFill, C.peerEdge, 1, 0];
+    if (s.id && photoOnly.has(s.id)) return [C.photoFill, C.photoEdge, 0.8, 0];
     if (s.id) return [C.coveredFill, C.coveredEdge, 0.9, 0];
     return [null, C.landEdge, 0.8, 0];
   }

@@ -350,8 +350,8 @@ nav.tabs button:not(.active):hover {
 
 .globe-legend span { display: inline-flex; align-items: center; gap: 6px; }
 
-/* The swatches mirror the globe exactly: filled = in the guide, solid = selected,
-   empty outline = not covered. */
+/* The swatches mirror the globe exactly: filled = official coverage, barely
+   filled = photospheres only, solid = selected, empty outline = not in the guide. */
 .globe-legend i {
   width: 9px;
   height: 9px;
@@ -364,6 +364,11 @@ nav.tabs button:not(.active):hover {
   background: #fff;
   border-color: #fff;
   box-shadow: 0 0 7px rgba(255,255,255,0.7);
+}
+
+.globe-legend .is-photo-key {
+  background: rgba(255,255,255,0.06);
+  border-color: rgba(255,255,255,0.34);
 }
 
 .globe-legend .is-empty-key {
@@ -463,6 +468,20 @@ nav.tabs button:not(.active):hover {
   padding: 2px 6px;
   font-family: 'JetBrains Mono', monospace;
   text-transform: none;
+}
+
+/* Marks a country whose only panoramas are user photospheres. Deliberately quieter
+   than .side-tag: it is a caveat, not a clue. */
+.cov-tag {
+  font-size: 9.5px;
+  letter-spacing: 0.06em;
+  color: var(--chalk-dim);
+  background: rgba(255,255,255,0.04);
+  border: 1px dashed var(--line);
+  border-radius: 4px;
+  padding: 2px 5px;
+  font-family: 'JetBrains Mono', monospace;
+  flex-shrink: 0;
 }
 
 /* Bollard, flag and ccTLD spread across the full width of the card. */

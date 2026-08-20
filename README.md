@@ -7,10 +7,11 @@ A country-clue reference and compare tool for [GeoGuessr](https://www.geoguessr.
 GeoLearn collects the small visual tells that identify a country in Street View — which
 side of the road traffic drives on, bollard shapes, road-sign styling, licence-plate
 colours, script and language, plus the countries it's most often mixed up with — and lets
-you look them up or compare them side by side. **All 123 places with public Google Street
-View coverage** are in the dataset — every country GeoGuessr can drop you in, plus the
-territories that play as their own place (Hong Kong, Macau, Puerto Rico, the Faroes,
-Réunion, Guam and the rest).
+you look them up or compare them side by side. **Every country in the world is in the
+dataset** — all 193 UN members plus Vatican City, Kosovo, Taiwan and Palestine, and the
+territories that play as their own place in GeoGuessr (Hong Kong, Macau, Puerto Rico, the
+Faroes, Réunion, Guam and the rest). 218 entries in total, each marked with whether Google
+actually drove it or whether the only panoramas are user photospheres.
 
 It's a **static site with no build step and no framework**: plain HTML, CSS, and
 JavaScript. Nothing to install, nothing to compile. (One generated file, `globe-data.js`,
@@ -29,7 +30,7 @@ geolearn/
 ├── globe.js        # The globe itself: projection, drawing, hit-testing, gestures
 ├── flights.js      # The ambient flight-tracker background (see "The background")
 ├── flags.js        # Flag <img> renderer + the per-flag aspect ratios
-├── flags/          # The 122 real flag images (PNG, public domain)
+├── flags/          # The 217 real flag images (PNG, public domain)
 ├── app.js          # Renders the views, owns the state object, draws the SVG swatches
 ├── tools/
 │   └── build-globe-data.js   # Regenerates globe-data.js (not part of the page)
@@ -63,7 +64,7 @@ page:
   empty outlines that say "not in the guide yet" on hover. Brightness carries the rest of
   the state — the others in the selected country's region are filled brighter (the visual
   echo of the filtered list), and the selected country itself is solid white with a glow.
-- Typing in the search box overrides the region scope, so a search always covers all 123
+- Typing in the search box overrides the region scope, so a search always covers all 218
   entries rather than silently searching inside one continent.
 - Each card carries the country's **flag and ccTLD** next to the bollard — `.ch`, `.ru`,
   `.at`. The domain suffix is a real clue in its own right: it turns up on vans, shopfronts
@@ -82,35 +83,39 @@ image assets.
 
 ## What counts as covered
 
-The country list is every entry in Wikipedia's [Google Street View
-coverage](https://en.wikipedia.org/wiki/Google_Street_View_coverage) table that is marked
-as having **public** Street View — 122 places as of August 2026 — which is the same set
-GeoGuessr can drop you into.
+Every country in the world is in here — all 193 UN member states, plus Vatican City,
+Kosovo, Taiwan and Palestine — so the answer to "why isn't X in the guide" is never a
+coverage rule. On top of that are the dependent territories that play as their own place
+in GeoGuessr: Hong Kong, Macau, Puerto Rico, the US Virgin Islands, Bermuda, Curaçao,
+Greenland, the Faroes, Åland, Svalbard, Gibraltar, Jersey, the Isle of Man, Réunion, Guam,
+the Northern Marianas, American Samoa, Christmas Island, the Cocos Islands, Pitcairn and
+Akrotiri and Dhekelia. Their tells are nothing like their parent country's — the USVI
+drives on the left with American plates, Macau pairs Portuguese with Chinese.
 
-That deliberately includes two kinds of entry a stricter list would drop:
+What differs between entries is **how you can actually be dropped there**, which is what
+the `coverage` field records:
 
-- **Dependent territories that play as their own place.** Hong Kong, Macau, Puerto Rico,
-  the US Virgin Islands, Bermuda, Curaçao, Greenland, the Faroes, Åland, Svalbard,
-  Gibraltar, Jersey, the Isle of Man, Réunion, Guam, the Northern Marianas, American
-  Samoa, Palestine. Their tells are nothing like their parent country's — the USVI drives
-  on the left with American plates, Macau pairs Portuguese with Chinese.
-- **Landmark-only coverage** you will almost never get in a round: Qatar, Lebanon, Oman,
-  Jordan, São Tomé and Príncipe, Akrotiri and Dhekelia, Christmas Island, the Cocos
-  (Keeling) Islands, Pitcairn. They are in for completeness.
+- **`official`** — a Street View car or trekker has driven it. 122 entries, taken from the
+  rows marked as public in Wikipedia's [Google Street View
+  coverage](https://en.wikipedia.org/wiki/Google_Street_View_coverage) table (August 2026).
+  This is the set a standard GeoGuessr game draws from.
+- **`photospheres`** — no official coverage; the only panoramas are user-uploaded. 96
+  entries, including China, Egypt, Iran, Pakistan, Cuba, Paraguay, Tanzania and every
+  small Pacific and Caribbean state. They turn up in community maps that allow unofficial
+  coverage, and nowhere else.
 
-Places with only photospheres or business interiors are **out**: China, Pakistan, Egypt,
-Paraguay, Tanzania, Madagascar, Iraq, Mali, Afghanistan, Antarctica and the rest of that
-list. Two footnotes on the edges:
+Photosphere-only entries are marked three ways: a dashed `PHOTO` chip on the card, a
+dimmer fill on the globe with its own legend key, and a Coverage row in the compare view.
+Moldova is one of them — it has no official coverage despite being surrounded by countries
+that do, and its key tip says so.
 
-- **Moldova** predates this list and has no official coverage; its entry is kept and says
-  so in the key tip.
-- **Akrotiri and Dhekelia** has no ISO code of its own, so it carries `GB` — which means
-  it shows the Union Flag and a `.uk` chip. It is a British base area on Cyprus; if you
-  land there, guessing Cyprus costs you almost nothing.
+One oddity worth knowing: **Akrotiri and Dhekelia** has no ISO code of its own, so it
+carries `GB` — which means it shows the Union Flag and a `.uk` chip. It is a British base
+area on Cyprus; if you land there, guessing Cyprus costs you almost nothing.
 
 `region` is used to scope the list when you pick a country, so it is coarse on purpose:
-Europe, Europe/Asia, Asia, Africa, North America, Central America, Caribbean, South
-America, Oceania.
+Europe, Eurasia, Asia, Africa, North America, Central America, Caribbean, South America,
+Oceania.
 
 ---
 
@@ -118,8 +123,8 @@ America, Oceania.
 
 `flags/` holds the real flag of every country in the dataset — public domain artwork from
 [flagcdn.com](https://flagcdn.com), rasterised to 160px wide and checked in, so the page
-still makes no third-party requests and still works from `file://`. All 122 together are
-about 490 KB. (122, not 123: the Akrotiri and Dhekelia entry flies the Union Flag, so it
+still makes no third-party requests and still works from `file://`. All 217 together are
+about 870 KB. (217, not 218: the Akrotiri and Dhekelia entry flies the Union Flag, so it
 reuses the UK's file.)
 
 This is the third version. Emoji came first and were dropped: Windows ships no flag glyphs
@@ -295,7 +300,8 @@ swatches from them at runtime, so they need to be valid CSS colours, not names.
 
 ```js
 {
-  id: "portugal", name: "Portugal", region: "Europe", driving: "right",
+  id: "portugal", name: "Portugal", code: "PT", region: "Europe", driving: "right",
+  coverage: "official",
   bollard: { body: "#f5f5f0", cap: "#1b1d21", band: "#c1443c", shape: "flat",
              notes: "White post with a black cap and a red reflective band near the top." },
   signs:   { bg: "#ffffff", accent: "#1b1d21",
@@ -316,8 +322,9 @@ swatches from them at runtime, so they need to be valid CSS colours, not names.
 | `id` | `string` | Unique lowercase slug. Used for lookups and referenced by other entries' `confusedWith`, so it must stay unique and stable. |
 | `name` | `string` | Display name shown in the UI. Also what `tools/build-globe-data.js` matches against Natural Earth to find the country's outline. |
 | `code` | `string` | **ISO 3166-1 alpha-2**, uppercase. Drives the flag image and the ccTLD chip (`"CH"` → `flags/ch.png` and `.ch`). The ccTLD is the code lowercased, apart from a small exception table in `app.js` — `GB` → `.uk`. |
-| `region` | `string` | Grouping used to scope the list when a country is picked on the globe, and to tint that country's neighbours. Reuse an existing value unless you mean to add a category. Currently: `Europe`, `Europe/Asia`, `Asia`, `Africa`, `Oceania`, `North America`, `South America`. |
+| `region` | `string` | Grouping used to scope the list when a country is picked on the globe, and to tint that country's neighbours. Reuse an existing value unless you mean to add a category. Currently: `Europe`, `Eurasia`, `Asia`, `Africa`, `Oceania`, `North America`, `Central America`, `Caribbean`, `South America`. |
 | `driving` | `"left"` \| `"right"` | Which side traffic drives on. Rendered as the LEFT/RIGHT tag on each card. |
+| `coverage` | `"official"` \| `"photospheres"` | Whether a Street View car has driven the country, or the only panoramas are user photospheres. Drives the PHOTO chip on the card, the dimmer fill on the globe, and a row in the compare view. |
 | `bollard` | `object` | See below. |
 | `signs` | `object` | See below. |
 | `plates` | `object` | See below. |
