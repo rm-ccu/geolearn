@@ -220,7 +220,7 @@ function renderGrid() {
       </div>
       <div class="card-mid">
         ${bollardSVG(c, 48)}
-        ${flagSVG(c.code, c.name, 40)}
+        ${flagImg(c.code, c.name, 27)}
         <span class="tld mono" title="Domain suffix — worth reading off vans and billboards">${ccTLD(c.code)}</span>
       </div>
       <div class="tip">${c.keyTip}</div>
@@ -315,7 +315,7 @@ function renderDetailPanel() {
   el.innerHTML = `
     <div class="detail-header">
       <div class="detail-title">
-        <h2>${flagSVG(c.code, c.name, 38)} ${c.name}</h2>
+        <h2>${flagImg(c.code, c.name, 26)} ${c.name}</h2>
         <span class="side-tag">${ccTLD(c.code)} &middot; ${c.region} &middot; drives on the ${c.driving}</span>
       </div>
       <button type="button" class="close-btn" id="closeDetail" aria-label="Close ${c.name}">&times;</button>

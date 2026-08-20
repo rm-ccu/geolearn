@@ -88,6 +88,79 @@ header.top .inner {
   flex-shrink: 0;
 }
 
+/* --- The mark animates: the globe turns, then a route draws across it. ---
+   The two meridians are full-width circles that get squashed horizontally; run a
+   quarter-period apart, they read as one wireframe globe rotating. Scaling is used
+   instead of animating `rx` so the whole thing stays on the compositor. */
+.brand-mark .meridian {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: brand-meridian 9s ease-in-out infinite;
+}
+.brand-mark .meridian.is-b {
+  /* A quarter of the 9s half-turn behind the first, so one wire is edge-on while
+     the other is face-on. */
+  animation-delay: -2.25s;
+  opacity: 0.24;
+}
+
+@keyframes brand-meridian {
+  0%, 100% { transform: scaleX(1); }
+  50%      { transform: scaleX(0.04); }
+}
+
+/* The route draws itself, holds long enough to read, then clears and repeats.
+   pathLength="1" on the path makes the dash values fractions of its length. */
+.brand-mark .route {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: brand-route 6s ease-in-out infinite;
+}
+
+@keyframes brand-route {
+  0%        { stroke-dashoffset: 1; opacity: 0; }
+  10%       { stroke-dashoffset: 0.9; opacity: 1; }
+  55%, 88%  { stroke-dashoffset: 0; opacity: 1; }
+  100%      { stroke-dashoffset: 0; opacity: 0; }
+}
+
+/* The pin lands as the route arrives — a small overshoot, then settle. */
+.brand-mark .pin,
+.brand-mark .pin-halo {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: brand-pin 6s ease-in-out infinite;
+}
+.brand-mark .pin-halo { animation-name: brand-pin-halo; }
+
+@keyframes brand-pin {
+  0%, 45%  { transform: scale(0); opacity: 0; }
+  60%      { transform: scale(1.3); opacity: 1; }
+  70%, 88% { transform: scale(1); opacity: 1; }
+  100%     { transform: scale(0.6); opacity: 0; }
+}
+
+@keyframes brand-pin-halo {
+  0%, 50%  { transform: scale(0.4); opacity: 0; }
+  62%      { transform: scale(1.5); opacity: 0.32; }
+  78%, 88% { transform: scale(1); opacity: 0.2; }
+  100%     { transform: scale(1); opacity: 0; }
+}
+
+/* Motion off: fall back to the static mark — one narrow meridian, route drawn,
+   pin sitting at the end of it. */
+@media (prefers-reduced-motion: reduce) {
+  .brand-mark .meridian,
+  .brand-mark .route,
+  .brand-mark .pin,
+  .brand-mark .pin-halo { animation: none; }
+  .brand-mark .meridian { transform: scaleX(0.42); }
+  .brand-mark .meridian.is-b { display: none; }
+  .brand-mark .route { stroke-dashoffset: 0; opacity: 1; }
+  .brand-mark .pin { transform: scale(1); opacity: 1; }
+  .brand-mark .pin-halo { transform: scale(1); opacity: 0.2; }
+}
+
 .brand h1 {
   font-size: 34px;
   line-height: 1;
@@ -401,11 +474,16 @@ nav.tabs button:not(.active):hover {
   width: 100%;
 }
 
+/* Real flag images out of flags/. Height is the driver — width follows from each
+   flag's own proportions, so Switzerland stays square and the UK stays 2:1. */
 .flag {
   display: block;
   flex-shrink: 0;
+  width: auto;
   border-radius: 3.5px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.45);
+  /* The hairline ring stands in for the stroked border the drawn flags carried,
+     and keeps the white in Japan or Poland off the card background. */
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.28), 0 1px 4px rgba(0,0,0,0.45);
 }
 
 .tld {
@@ -450,7 +528,7 @@ nav.tabs button:not(.active):hover {
 }
 
 .has-selection .plate-card .card-mid > svg:first-child { width: 26px; height: 26px; }
-.has-selection .plate-card .flag { width: 30px; height: 20px; }
+.has-selection .plate-card .flag { height: 20px; }
 .has-selection .plate-card .tld { font-size: 11px; padding: 1px 5px; }
 .has-selection .plate-card .name-row { flex: 1; min-width: 0; gap: 8px; }
 .has-selection .plate-card .side-tag { flex-shrink: 0; }

@@ -25,7 +25,8 @@ geolearn/
 ├── globe-data.js   # Generated country outlines for the globe (see "Globe geometry")
 ├── globe.js        # The globe itself: projection, drawing, hit-testing, gestures
 ├── flights.js      # The ambient flight-tracker background (see "The background")
-├── flags.js        # Flag specs + the SVG flag renderer
+├── flags.js        # Flag <img> renderer + the per-flag aspect ratios
+├── flags/          # The 53 real flag images (PNG, public domain)
 ├── app.js          # Renders the views, owns the state object, draws the SVG swatches
 ├── tools/
 │   └── build-globe-data.js   # Regenerates globe-data.js (not part of the page)
@@ -34,7 +35,7 @@ geolearn/
 ```
 
 The scripts load in that order, so `COUNTRIES`, `WORLD_LAND`, `createGlobe()`, and
-`createFlightField()`, and `flagSVG()` are all defined as plain globals by the time
+`createFlightField()`, and `flagImg()` are all defined as plain globals by the time
 `app.js` runs. There are no ES modules and no
 `fetch()`, which is why the page works from `file://`.
 
@@ -69,43 +70,63 @@ Everything the globe does is also reachable without it — the list, the search 
 keyboard control of the globe (arrows to rotate, <kbd>+</kbd>/<kbd>-</kbd> to zoom,
 <kbd>Esc</kbd> to clear) all work on their own.
 
-Flags are **drawn, not emoji** — see below. The bollard, sign, and plate thumbnails are
-**generated SVG**, not images — `bollardSVG()`,
-`signSwatch()`, and `plateSwatch()` build them from the hex colours in `data.js`. That's why
-the project has no image assets at all.
+Flags are **real flag images** — see below. The bollard, sign, and plate thumbnails are
+still **generated SVG** — `bollardSVG()`, `signSwatch()`, and `plateSwatch()` build them
+from the hex colours in `data.js` — so `flags/` is the only place the project keeps
+image assets.
 
 ---
 
 ## Flags
 
-`flags.js` draws all 53 flags from a small declarative spec, in the same spirit as the
-bollard and plate swatches. Emoji flags were the first attempt and were dropped: they
-carried a different visual language to everything else on the page, and Windows ships no
-flag glyphs at all, so a third of visitors would have seen two boxed letters.
+`flags/` holds the real flag of every country in the dataset — public domain artwork from
+[flagcdn.com](https://flagcdn.com), rasterised to 160px wide and checked in, so the page
+still makes no third-party requests and still works from `file://`. All 53 together are
+about 210 KB.
 
-Every flag is authored in a fixed `60x40` viewBox, so `flagSVG(code, name, width)` only has
-to set width and height. A spec is usually one line:
+This is the third version. Emoji came first and were dropped: Windows ships no flag glyphs
+at all, so a third of visitors saw two boxed letters. Hand-drawn SVG specs came second —
+they matched the drawn bollard and plate swatches, but a stylised guess at a coat of arms
+is exactly the wrong thing in a reference you're using to learn what a country actually
+looks like. Albania's eagle has to be Albania's eagle.
+
+`flagImg(code, name, height)` sizes flags by **height**, not width:
 
 ```js
-DE: { h: ["#000000", "#dd0000", "#ffce00"] },        // horizontal bands
-FR: { v: ["#002654", "#ffffff", "#ce1126"] },        // vertical bands
-DK: { nordic: ["#c8102e", "#ffffff"] },              // off-centre cross
-ES: { raw: `...` },                                   // hand-drawn
-HR: { h: [...], over: `...` },                        // bands plus an emblem
+flagImg("CH", "Switzerland", 26)
+// <img class="flag" src="flags/ch.png" width="26" height="26" ...>
 ```
 
-Bands take `[colour, weight]` pairs when the stripes aren't equal, and there are shared
-helpers for the shapes that recur: `star()`, `sunburst()`, `shield()`, `nordicCross()`,
-`doubleEagle()`, and a `unionJack` that scales into the canton of the Australian and New
-Zealand flags.
+Every flag then sits on the same baseline while keeping its true proportions — Switzerland
+is square, the UK and Canada are 2:1, most of Europe is 3:2 — instead of being stretched
+into one uniform box. `FLAG_RATIO` in `flags.js` records each image's width/height so the
+`<img>` can carry both dimensions up front and nothing reflows as the flags decode. A
+country in `data.js` with no entry there falls back to a `?` placeholder rather than a
+broken image.
 
-**Emblems are stylised on purpose.** These render between 26 and 40 pixels wide, where real
-heraldry is sub-pixel mush — Albania's eagle is a silhouette with two beaked heads rather
-than an attempt at the actual bird, and Spain's coat of arms is a suggestion of one. The
-target is what you'd recognise in a thumbnail, not what a vexillologist would accept.
+The rounded corners, hairline ring and drop shadow are `.flag` in `style.css`. To add a
+country, drop `flags/xx.png` in and add its ratio to `FLAG_RATIO`.
 
 The ccTLD beside each flag is the ISO code lowercased, with an exception table in `app.js`
 for the cases where the two diverge — `GB` → `.uk` is the only one in the current dataset.
+
+---
+
+## The mark
+
+The logo in the header is inline SVG in `index.html`, animated entirely in CSS
+(`.brand-mark` in `style.css`) — no JS, no GIF, nothing to load.
+
+Two things move. The globe turns: two meridians are drawn as full-width circles and
+squashed horizontally with `scaleX`, running a quarter-period apart so one wire is edge-on
+while the other is face-on. Scaling is used rather than animating the `rx` attribute so the
+whole thing stays on the compositor. Then a route draws itself across the globe on a
+separate 6s loop — `pathLength="1"` on the path turns the dash values into plain fractions
+of its length — and the pin lands at the end of it with a small overshoot and a halo ping
+before the whole thing clears and repeats.
+
+Under `prefers-reduced-motion` every animation is switched off and the mark falls back to
+the static logo it was before: one narrow meridian, route drawn, pin sitting at the end.
 
 ---
 
@@ -221,7 +242,10 @@ Then visit the URL it prints — usually <http://localhost:3000> for `serve` or
 ## Adding a new country
 
 Every country is one object in the `COUNTRIES` array in `data.js`. Add an entry and reload
-— there is nothing else to register or import.
+— there is nothing else to register or import, with one exception: the flag is a real
+image, so drop `flags/xx.png` in alongside it (`curl -o flags/pt.png https://flagcdn.com/w160/pt.png`)
+and add its width/height to `FLAG_RATIO` in `flags.js`. Skip that and the card renders a
+`?` placeholder; everything else still works.
 
 The colour fields are real hex colours: `app.js` draws the little bollard, sign, and plate
 swatches from them at runtime, so they need to be valid CSS colours, not names.
@@ -248,7 +272,7 @@ swatches from them at runtime, so they need to be valid CSS colours, not names.
 | --- | --- | --- |
 | `id` | `string` | Unique lowercase slug. Used for lookups and referenced by other entries' `confusedWith`, so it must stay unique and stable. |
 | `name` | `string` | Display name shown in the UI. Also what `tools/build-globe-data.js` matches against Natural Earth to find the country's outline. |
-| `code` | `string` | **ISO 3166-1 alpha-2**, uppercase. Drives the flag emoji and the ccTLD chip (`"CH"` → 🇨🇭 and `.ch`). The ccTLD is the code lowercased, apart from a small exception table in `app.js` — `GB` → `.uk`. |
+| `code` | `string` | **ISO 3166-1 alpha-2**, uppercase. Drives the flag image and the ccTLD chip (`"CH"` → `flags/ch.png` and `.ch`). The ccTLD is the code lowercased, apart from a small exception table in `app.js` — `GB` → `.uk`. |
 | `region` | `string` | Grouping used to scope the list when a country is picked on the globe, and to tint that country's neighbours. Reuse an existing value unless you mean to add a category. Currently: `Europe`, `Europe/Asia`, `Asia`, `Africa`, `Oceania`, `North America`, `South America`. |
 | `driving` | `"left"` \| `"right"` | Which side traffic drives on. Rendered as the LEFT/RIGHT tag on each card. |
 | `bollard` | `object` | See below. |

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GeoLearn — the compare-first GeoGuessr clue reference</title>
+<title>GeoLearn</title>
 <meta name="description" content="Browse GeoGuessr identification clues by country, or compare two countries side by side to see exactly what differs.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2040%2040%22%3E%3Crect%20width%3D%2240%22%20height%3D%2240%22%20rx%3D%229%22%20fill%3D%22%231b1d21%22%2F%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%2220%22%20r%3D%2213%22%20fill%3D%22none%22%20stroke%3D%22%23edeae3%22%20stroke-width%3D%221.4%22%20opacity%3D%220.92%22%2F%3E%20%3Cellipse%20cx%3D%2220%22%20cy%3D%2220%22%20rx%3D%225.4%22%20ry%3D%2213%22%20fill%3D%22none%22%20stroke%3D%22%23edeae3%22%20stroke-width%3D%220.9%22%20opacity%3D%220.42%22%2F%3E%20%3Cline%20x1%3D%227%22%20y1%3D%2220%22%20x2%3D%2233%22%20y2%3D%2220%22%20stroke%3D%22%23edeae3%22%20stroke-width%3D%220.9%22%20opacity%3D%220.42%22%2F%3E%20%3Cpath%20d%3D%22M8.7%2013.6%20Q20%2017.2%2031.3%2013.6%22%20fill%3D%22none%22%20stroke%3D%22%23edeae3%22%20stroke-width%3D%220.8%22%20opacity%3D%220.3%22%2F%3E%20%3Cpath%20d%3D%22M8.7%2026.4%20Q20%2030%2031.3%2026.4%22%20fill%3D%22none%22%20stroke%3D%22%23edeae3%22%20stroke-width%3D%220.8%22%20opacity%3D%220.3%22%2F%3E%20%3Cpath%20d%3D%22M10.5%2027.5%20Q16%204%2031.5%2011%22%20fill%3D%22none%22%20stroke%3D%22%23f2c14e%22%20stroke-width%3D%221.5%22%20stroke-linecap%3D%22round%22%2F%3E%20%3Ccircle%20cx%3D%2231.5%22%20cy%3D%2211%22%20r%3D%224.6%22%20fill%3D%22%23f2c14e%22%20opacity%3D%220.2%22%2F%3E%20%3Ccircle%20cx%3D%2231.5%22%20cy%3D%2211%22%20r%3D%222.5%22%20fill%3D%22%23f2c14e%22%2F%3E%3C%2Fsvg%3E">
 <link rel="stylesheet" href="style.css">
@@ -16,15 +16,19 @@
 <header class="top">
   <div class="inner">
     <div class="brand">
+      <!-- The globe spins by squashing two meridians a quarter-turn out of phase,
+           and the route redraws itself and lands on the marker. All of it is CSS
+           (see .brand-mark in style.css) and all of it stops under reduced motion. -->
       <svg class="brand-mark" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="GeoLearn logo: a wireframe globe with a route arc">
         <circle cx="20" cy="20" r="13" fill="none" stroke="#edeae3" stroke-width="1.4" opacity="0.92"/>
-        <ellipse cx="20" cy="20" rx="5.4" ry="13" fill="none" stroke="#edeae3" stroke-width="0.9" opacity="0.42"/>
+        <ellipse class="meridian" cx="20" cy="20" rx="13" ry="13" fill="none" stroke="#edeae3" stroke-width="0.9" opacity="0.42"/>
+        <ellipse class="meridian is-b" cx="20" cy="20" rx="13" ry="13" fill="none" stroke="#edeae3" stroke-width="0.9" opacity="0.42"/>
         <line x1="7" y1="20" x2="33" y2="20" stroke="#edeae3" stroke-width="0.9" opacity="0.42"/>
         <path d="M8.7 13.6 Q20 17.2 31.3 13.6" fill="none" stroke="#edeae3" stroke-width="0.8" opacity="0.3"/>
         <path d="M8.7 26.4 Q20 30 31.3 26.4" fill="none" stroke="#edeae3" stroke-width="0.8" opacity="0.3"/>
-        <path d="M10.5 27.5 Q16 4 31.5 11" fill="none" stroke="#f2c14e" stroke-width="1.5" stroke-linecap="round"/>
-        <circle cx="31.5" cy="11" r="4.6" fill="#f2c14e" opacity="0.2"/>
-        <circle cx="31.5" cy="11" r="2.5" fill="#f2c14e"/>
+        <path class="route" pathLength="1" d="M10.5 27.5 Q16 4 31.5 11" fill="none" stroke="#f2c14e" stroke-width="1.5" stroke-linecap="round"/>
+        <circle class="pin-halo" cx="31.5" cy="11" r="4.6" fill="#f2c14e" opacity="0.2"/>
+        <circle class="pin" cx="31.5" cy="11" r="2.5" fill="#f2c14e"/>
       </svg>
       <div>
         <h1>GeoLearn</h1>
