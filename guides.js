@@ -496,8 +496,55 @@ const GUIDE_MAPS = [
     blurb: "City-weighted world maps, and what changes when every drop has signage." },
   { id: "country-streaks", name: "Country streaks", flavour: "Format",
     blurb: "Not a map but a format — and it rewards the opposite instincts to duels." },
-  { id: "united-states", name: "United States", flavour: "Official + community",
-    blurb: "State-level tells: plates, route shields, poles and tree lines." },
+  {
+    id: "united-states", name: "United States", flavour: "Official + community",
+    blurb: "The country is free. All the work is in the state — and the route marker does most of it.",
+    body: [
+      { t: "p", text: "The United States is the largest single block of coverage in the game, which makes it the one country where getting the country right is worth almost nothing. Every point is in the state, and often in the corner of the state. That makes it a different exercise from the rest of the course: the clue families are the same, but they all operate one level down." },
+
+      { t: "p", text: "The good news is that the country hands you a tool nowhere else has. Every state signs its own highways with its own marker, the markers are standardised within a state, and they are **everywhere**. This is the American bollard." },
+
+      { t: "families", caption: "Every state and the District, grouped by what its route marker is shaped like. The silhouettes are the real state outlines, generated from census boundaries rather than drawn by hand." },
+
+      { t: "p", text: "That grouping is the whole trick. A silhouette-shaped sign cuts fifty states to seventeen before you have read the number on it. A plain circle cuts them to six. A diamond cuts them to two." },
+
+      { t: "shields", ids: ["pennsylvania", "utah", "kansas", "washington", "new mexico", "california"],
+        caption: "The states with an emblem of their own are the free ones — each of these answers the round on sight." },
+
+      { t: "callout", tone: "tip", label: "Learn the eight free ones first", text: "Pennsylvania's keystone, Utah's beehive, Kansas's sunflower, Washington's bust, New Hampshire's Old Man, New Mexico's Zia sun, Colorado's flag and California's green spade. Eight states that need no further thought, for about twenty minutes of study." },
+
+      { t: "p", text: "The families that do not answer the round still narrow it hard, and then the landscape finishes the job. Two states sharing a marker family almost never share a biome." },
+
+      { t: "state-diff", a: "michigan", b: "north carolina",
+        note: "The only two diamond states in the country — so the marker gets you to a coin flip, and one look at the trees settles it." },
+
+      { t: "state-diff", a: "georgia", b: "minnesota",
+        note: "Both sign with their own outline. Red clay under pine against birch and lake country: the family narrows, the landscape decides." },
+
+      { t: "p", text: "**Landscape is the second tool**, and in the US it is unusually legible because the country is big enough for its biomes to be distinct. Red clay and loblolly pine in the Southeast. Black-soil corn and grain bins across the Midwest. Treeless short-grass plain on the High Plains. Sagebrush basin and bare ridge in the Great Basin. Douglas fir and moss west of the Cascades, sagebrush east of them. Stone walls in the woods across New England." },
+
+      { t: "callout", tone: "warn", label: "Plates change, so read them loosely", text: "US plate designs are reissued constantly and most states run dozens of specialty variants at once, so a specific colour is weak evidence. Read the **state name band** rather than the artwork. The one durable structural tell is Florida, which prints the **county name** across the bottom of the plate — no other state does that as standard." },
+
+      { t: "steps", label: "The rest of the American toolkit", items: [
+        "**Area codes** on shopfronts and vans — three digits that pin a metro area, not just a state.",
+        "**Regional chains.** Publix in the Southeast, HEB in Texas, Wawa in the Mid-Atlantic, In-N-Out in the West. A single storefront can be worth a state.",
+        "**Road surface.** Jointed concrete with a regular thump line is common across the Midwest and Texas; asphalt dominates the Northeast and South.",
+        "**Utility poles.** Wooden almost everywhere, so read the transformer and cross-arm style rather than the material.",
+        "**Guardrail and post type**, and whether the shoulder is paved, gravel or nothing at all.",
+        "**Vermont bans billboards outright**, and so do Maine, Hawaii and Alaska — an American road with no advertising at all is a real clue."
+      ]},
+
+      { t: "p", text: "**How the coverage is weighted.** The official map and the balanced community versions both follow the road network, which means population: the Northeast corridor, the Midwest grid, coastal California and the Texas triangle carry far more drops than the Mountain West. Interior Alaska and the emptiest parts of Nevada and Wyoming exist but are rare. As of August 2026 that weighting has been stable for years — when you are torn between an empty western state and a populated eastern one, the east is the better bet." },
+
+      { t: "callout", tone: "tip", label: "Where to spend your study time", text: "The eight emblem states, then the seventeen outline states as a group, then the four biome bands. That is most of the country handled without memorising a single plate design." },
+
+      { t: "drills", label: "State drills", items: [
+        { q: "A white diamond route marker, dense mixed hardwood and pine, and a lake visible through the trees.", a: "michigan", why: "The diamond narrows it to Michigan or North Carolina, and lake-and-hardwood country in a cold climate is Michigan." },
+        { q: "A route marker shaped like a beehive, red rock canyon walls either side of the road.", a: "utah", why: "The beehive is Utah's alone, and the red rock confirms it." },
+        { q: "Flat sandy pine flatwoods with palmetto, and a passing plate carries a county name across the bottom.", a: "florida", why: "The county name on the plate as standard is Florida, and the flatwoods and palmetto match." }
+      ]}
+    ]
+  },
   { id: "flags", name: "Flags of the world", flavour: "Training",
     blurb: "Flag recall as a drill, using the 217 flags this site already ships." }
 ];

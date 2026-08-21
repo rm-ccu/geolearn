@@ -30,7 +30,8 @@ function inline(text) {
       return `<button type="button" class="country-chip" data-country="${c.id}"
         title="Open ${escapeHtml(c.name)} in Browse">${flagImg(c.code, c.name, 13)}${escapeHtml(c.name)}</button>`;
     })
-    .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+    .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+    .replace(/`([^`]+)`/g, '<span class="mono">$1</span>');
 }
 
 // ---------- Blocks ----------
@@ -113,12 +114,103 @@ function diffBlock(b) {
 // Ids must stay unique even if a chapter ever carries two drill blocks.
 let _drillUid = 0;
 
+// ---------- States ----------
+
+const stateById = (id) => US_STATES.find(x => x.id === id);
+
+// State shields are figures, not buttons: there is no state page to open, and a
+// swatch that looks clickable but is not would be worse than one that doesn't.
+function shieldFigure(st, size = 52) {
+  return `
+    <figure class="shield-cell">
+      ${shieldSVG(st, size)}
+      <figcaption>${escapeHtml(st.name)}</figcaption>
+    </figure>`;
+}
+
+function shieldsBlock(b) {
+  const cells = b.ids.map(id => {
+    const st = stateById(id);
+    return st ? shieldFigure(st) : "";
+  }).join("");
+  return `
+    <div class="guide-swatches">
+      <div class="swatch-row">${cells}</div>
+      ${b.caption ? `<div class="swatch-caption">${inline(b.caption)}</div>` : ""}
+    </div>`;
+}
+
+// The core teaching artifact of the US guide: five marker families, and which
+// states sit in each. Built from states.js, so it can never fall out of step
+// with the dataset.
+const FAMILY_LABEL = {
+  outline: "The state's own outline",
+  other: "A design of its own",
+  square: "A plain square or rectangle",
+  circle: "The plain federal circle",
+  diamond: "A diamond",
+};
+
+function familiesBlock(b) {
+  const order = ["outline", "other", "square", "circle", "diamond"];
+  const groups = order.map(fam => {
+    const members = US_STATES.filter(st => st.shield.family === fam);
+    if (!members.length) return "";
+    const names = members.map(st => `<span class="family-state">${escapeHtml(st.name)}</span>`).join("");
+    // The geometric families are illustrated by any member, but "a design of its
+    // own" needs one whose design is actually recorded — otherwise it is
+    // illustrated by Alaska's blank. Only that family gets the search, so the
+    // plain-circle row is not illustrated by New Mexico's Zia sun.
+    const exemplar = fam === "other" ? (members.find(st => st.shield.symbol) || members[0]) : members[0];
+    return `
+      <div class="family-row">
+        <div class="family-mark">${shieldSVG(exemplar, 46)}</div>
+        <div class="family-body">
+          <div class="family-head">${escapeHtml(FAMILY_LABEL[fam])}
+            <span class="family-count">${members.length} ${members.length === 1 ? "state" : "states"}</span>
+          </div>
+          <div class="family-states">${names}</div>
+        </div>
+      </div>`;
+  }).join("");
+  return `<div class="guide-families">${groups}${b.caption ? `<div class="swatch-caption">${inline(b.caption)}</div>` : ""}</div>`;
+}
+
+function stateDiffBlock(b) {
+  const a = stateById(b.a), z = stateById(b.b);
+  if (!a || !z) return "";
+  const cell = (st) => `
+    <div class="diff-cell">
+      <div class="field-label">${escapeHtml(st.name)}</div>${shieldSVG(st, 40)}
+      <div class="field-note">${escapeHtml(st.shield.notes)}</div>
+    </div>`;
+  const land = (st) => `
+    <div class="diff-cell">
+      <div class="field-label">Landscape</div>
+      <div class="field-note">${escapeHtml(st.landscape)}</div>
+    </div>`;
+  const sameFamily = a.shield.family === z.shield.family;
+  return `
+    <div class="guide-diff">
+      <div class="guide-diff-head">
+        <span>${escapeHtml(a.name)}</span><span class="vs">vs</span><span>${escapeHtml(z.name)}</span>
+      </div>
+      <div class="diff-row ${sameFamily ? "is-same" : "is-diff"}">${cell(a)}${cell(z)}</div>
+      <div class="diff-row is-diff">${land(a)}${land(z)}</div>
+      ${b.note ? `<div class="swatch-caption">${inline(b.note)}</div>` : ""}
+    </div>`;
+}
+
 function drillsBlock(b) {
   const items = b.items.map((d) => {
     const i = ++_drillUid;
+    // A drill answer is normally a country; the US guide answers with a state,
+    // which has no flag and no page to open, so it renders as plain text.
     const c = byId(d.a);
+    const st = c ? null : stateById(d.a);
     const answer = c
       ? `${flagImg(c.code, c.name, 18)} <button type="button" class="country-chip" data-country="${c.id}">${escapeHtml(c.name)}</button>`
+      : st ? escapeHtml(st.name)
       : escapeHtml(d.a);
     return `
       <li class="drill">
@@ -291,6 +383,9 @@ function renderBlock(b) {
     case "diff":     return diffBlock(b);
     case "drills":   return drillsBlock(b);
     case "test":     return testBlock();
+    case "shields":  return shieldsBlock(b);
+    case "families": return familiesBlock(b);
+    case "state-diff": return stateDiffBlock(b);
     default:         return "";
   }
 }

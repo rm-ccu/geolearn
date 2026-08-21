@@ -27,15 +27,19 @@ geolearn/
 ├── style.css       # All styling (dark "asphalt" theme, CSS custom properties in :root)
 ├── data.js         # The COUNTRIES array — the entire dataset
 ├── guides.js       # The COURSE and GUIDE_MAPS arrays — the guidebook's content
+├── states.js       # The US_STATES array — 50 states + DC, for the US map guide
+├── state-outlines.js # Generated state silhouettes for the route-marker swatches
 ├── globe-data.js   # Generated country outlines for the globe (see "Globe geometry")
 ├── globe.js        # The globe itself: projection, drawing, hit-testing, gestures
 ├── flights.js      # The ambient flight-tracker background (see "The background")
 ├── flags.js        # Flag <img> renderer + the per-flag aspect ratios
 ├── flags/          # The 217 real flag images (PNG, public domain)
+├── shields.js      # Route-marker renderer — the US analogue of bollardSVG()
 ├── guide.js        # Renders the guidebook from its typed blocks
 ├── app.js          # Renders the views, owns the state object, draws the SVG swatches
 ├── tools/
-│   └── build-globe-data.js   # Regenerates globe-data.js (not part of the page)
+│   ├── build-globe-data.js       # Regenerates globe-data.js (not part of the page)
+│   └── build-state-outlines.js   # Regenerates state-outlines.js
 ├── README.md
 └── .gitignore
 ```
@@ -100,14 +104,17 @@ Chapters live in `guides.js` as **typed blocks**, not HTML:
 | `callout` | A highlighted tip (`tone: "tip"`) or trap warning (`tone: "warn"`) |
 | `swatches` | Real bollard/sign/plate swatches for a list of country ids |
 | `diff` | A two-country comparison, same rows the Compare view builds. `rows` picks the fields — `["bollard", "plates"]` for a European pair, `["plates", "signs"]` for an East African one |
-| `drills` | Click-to-reveal practice questions, answers linked to countries |
+| `drills` | Click-to-reveal practice questions, answers linked to countries (or to states) |
+| `shields` | Route-marker swatches for a list of state ids |
+| `families` | The five route-marker families and every state in each, built from `states.js` |
+| `state-diff` | Two states side by side — marker family and landscape |
 | `test` | The scored self-test, drawn from the `SELF_TEST` array |
 
 The indirection is the point: `swatches` calls `bollardSVG()` and `diff` calls `fieldRow()`,
 so **a lesson cannot drift away from `data.js`** — edit a country's bollard colour and every
 chapter that draws it updates. Nothing in `guide.js` knows what a bollard looks like.
 
-Prose takes a tiny inline markup — `**bold**` and `[[country-id]]`. The latter becomes a
+Prose takes a tiny inline markup — `**bold**`, `` `code` ``, and `[[country-id]]`. The latter becomes a
 chip with the country's flag that jumps straight into Browse with that country open
 (`openCountry()` in `app.js`), which is the whole reason the guidebook lives inside the app
 instead of being a markdown file. Text is escaped before the markup runs, so the markup is
@@ -145,6 +152,57 @@ screen — and its page says so plainly instead of 404ing.
 Map guides describe composition **qualitatively and dated** ("heavy US/Russia/Brazil
 weighting", as of August 2026) rather than quoting location counts. Community maps are
 re-cut constantly and a hard number in here would be wrong within a month.
+
+
+### US states and route markers
+
+The United States is the one country where getting the country right is worth almost
+nothing, so the US map guide works a level down — and it needs its own dataset to do it.
+`states.js` holds all 50 states plus the District, **shaped as a sibling of a `COUNTRIES`
+entry** (`id`, `name`, `code`, `region`, `keyTip`, `confusedWith`) so it can feed Browse and
+Compare later without a reshape. Today only the guidebook reads it.
+
+The field that earns the file is `shield.family`, the route-marker classification:
+
+| Family | States | What it means |
+|---|---|---|
+| `outline` | 17 | The sign is the state's own silhouette |
+| `other` | 16 | A design of the state's own — a keystone, a beehive, a face |
+| `square` | 10 | A plain square or rectangular blank |
+| `circle` | 6 | The plain federal blank, with no state identity at all |
+| `diamond` | 2 | Michigan and North Carolina, and nobody else |
+
+Seeing which family a marker belongs to cuts fifty states to a handful before you have read
+the number on it, which is why this is the American bollard. Families are sourced from
+routemarkers.com's by-shape index and Wikipedia's coverage of state markers (August 2026);
+named emblems are recorded **only where a source names them**, so eight `other` states
+(Alaska, Hawaii, Nebraska, New York, North Dakota, Oregon, Vermont, Virginia) have a
+distinctive marker this dataset does not yet describe. `shieldSVG()` draws those as a
+dashed blank rather than inventing artwork.
+
+`shieldSVG(state, size)` in `shields.js` is the counterpart to `bollardSVG()`: same
+fraction-of-`S` convention, same "one definition renders at 34px and 64px alike" rule. It
+draws the real sign colours — white on black — rather than the site palette, because that
+is what a route marker looks like out in the world.
+
+**The silhouettes are real.** Drawing seventeen state outlines as one generic blob would
+teach the wrong shape, and the shape *is* the clue, so `state-outlines.js` is generated the
+same way `globe-data.js` is:
+
+```
+node tools/build-state-outlines.js
+```
+
+It pulls US Census cartographic boundaries from the `us-atlas` package — the sibling of the
+`world-atlas` package the globe already uses — decodes the TopoJSON with the same arc
+decoder, simplifies with the same Douglas-Peucker, scales x by cos(mean latitude) so states
+are not drawn too wide, and normalises each into a 0..1 box with y flipped for SVG. One
+transform then drops any state into a sign at any size. Only outline-family states are
+emitted; nothing else is drawn from a silhouette, and it keeps Alaska out, whose Aleutian
+chain crosses the antimeridian and normalises into an unusable smear.
+
+Like `globe-data.js`, the output is committed, so the page runs as-is and the tool is only
+needed when the dataset changes.
 
 ---
 
