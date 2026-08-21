@@ -38,6 +38,7 @@
     <nav class="tabs">
       <button data-view="browse" class="active">Browse</button>
       <button data-view="compare">Compare</button>
+      <button data-view="guide">Guide</button>
     </nav>
   </div>
 </header>
@@ -95,6 +96,26 @@
     <div id="compareOutput"></div>
   </section>
 
+
+  <!-- GUIDE -->
+  <section id="view-guide" class="view">
+    <div class="guide-layout">
+      <!-- Contents rail. Chapters that aren't written yet still appear, greyed,
+           so the shape of the whole book is visible from the first screen. -->
+      <aside class="guide-rail" id="guideAside" aria-label="Guidebook contents">
+        <!-- Stacked above the article on narrow screens, nineteen entries is a long
+             scroll before the reading starts, so there the rail collapses behind this
+             button. It is display:none on wide layouts, where the rail is a sidebar. -->
+        <button type="button" class="rail-toggle" id="railToggle" aria-expanded="false" aria-controls="guideRail">
+          <span class="rail-toggle-label">Contents</span>
+          <span class="rail-toggle-current" id="railCurrent"></span>
+        </button>
+        <div class="rail-groups" id="guideRail"></div>
+      </aside>
+      <article class="guide-article" id="guideArticle" tabindex="-1"></article>
+    </div>
+  </section>
+
 </div>
 
 <footer class="foot">
@@ -102,10 +123,12 @@
 </footer>
 
 <script src="data.js"></script>
+<script src="guides.js"></script>
 <script src="globe-data.js"></script>
 <script src="flights.js"></script>
 <script src="flags.js"></script>
 <script src="globe.js"></script>
+<script src="guide.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

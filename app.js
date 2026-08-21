@@ -514,6 +514,22 @@ function setView(view) {
   if (view === "browse" && globe) globe.resize(); // the canvas had no size while hidden
 }
 
+// The guidebook's country chips and swatches jump straight into Browse with that
+// country selected — the guide teaches the tell, the country page holds the detail.
+function openCountry(id) {
+  if (!byId(id)) return;
+  setView("browse");
+  selectCountry(id);
+  // selectCountry already scrolls on the stacked layout; this covers the wide one,
+  // where arriving from another tab can leave the panel below the fold.
+  if (!window.matchMedia("(max-width: 900px)").matches) {
+    document.getElementById("detailCol").scrollIntoView({
+      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+      block: "start",
+    });
+  }
+}
+
 // ---------- Init ----------
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -524,6 +540,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   renderListHead();
   renderGrid();
+  initGuide();
 
   globe = createGlobe(document.getElementById("globeCanvas"), {
     onSelect: (id, name) => {

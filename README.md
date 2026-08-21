@@ -26,11 +26,13 @@ geolearn/
 ├── index.html      # Static shell: header, and the two <section> views
 ├── style.css       # All styling (dark "asphalt" theme, CSS custom properties in :root)
 ├── data.js         # The COUNTRIES array — the entire dataset
+├── guides.js       # The COURSE and GUIDE_MAPS arrays — the guidebook's content
 ├── globe-data.js   # Generated country outlines for the globe (see "Globe geometry")
 ├── globe.js        # The globe itself: projection, drawing, hit-testing, gestures
 ├── flights.js      # The ambient flight-tracker background (see "The background")
 ├── flags.js        # Flag <img> renderer + the per-flag aspect ratios
 ├── flags/          # The 217 real flag images (PNG, public domain)
+├── guide.js        # Renders the guidebook from its typed blocks
 ├── app.js          # Renders the views, owns the state object, draws the SVG swatches
 ├── tools/
 │   └── build-globe-data.js   # Regenerates globe-data.js (not part of the page)
@@ -43,10 +45,11 @@ The scripts load in that order, so `COUNTRIES`, `WORLD_LAND`, `createGlobe()`, a
 `app.js` runs. There are no ES modules and no
 `fetch()`, which is why the page works from `file://`.
 
-The UI is two views inside one page — **browse** and **compare** (two countries side by
-side, matching fields dimmed and differing fields highlighted). `app.js` swaps between them
-by toggling an `.active` class; there is no router. A single `state` object holds the
-current view, search text, the selected country, and the two compare selections.
+The UI is three views inside one page — **browse**, **compare** (two countries side by
+side, matching fields dimmed and differing fields highlighted), and **guide** (the
+guidebook). `app.js` swaps between them by toggling an `.active` class; there is no router.
+A single `state` object holds the current view, search text, the selected country, and the
+two compare selections; the guidebook keeps its own small `guideState` in `guide.js`.
 
 ### The browse view
 
@@ -78,6 +81,52 @@ Flags are **real flag images** — see below. The bollard, sign, and plate thumb
 still **generated SVG** — `bollardSVG()`, `signSwatch()`, and `plateSwatch()` build them
 from the hex colours in `data.js` — so `flags/` is the only place the project keeps
 image assets.
+
+
+### The guidebook
+
+The third view is a book rather than a lookup: a **beginner course** that goes from "I have
+no idea" to naming the country, and **per-map guides** for the maps people actually queue
+into. A contents rail on the left, one chapter in the reading pane on the right; below
+900px the rail collapses behind a one-line **Contents** disclosure so the article stays the
+first thing on screen.
+
+Chapters live in `guides.js` as **typed blocks**, not HTML:
+
+| Block | What it renders |
+|---|---|
+| `p` | A paragraph |
+| `steps` | A numbered procedure |
+| `callout` | A highlighted tip (`tone: "tip"`) or trap warning (`tone: "warn"`) |
+| `swatches` | Real bollard/sign/plate swatches for a list of country ids |
+| `diff` | A two-country comparison, same rows the Compare view builds. `rows` picks the fields — `["bollard", "plates"]` for a European pair, `["plates", "signs"]` for an East African one |
+| `drills` | Click-to-reveal practice questions, answers linked to countries |
+
+The indirection is the point: `swatches` calls `bollardSVG()` and `diff` calls `fieldRow()`,
+so **a lesson cannot drift away from `data.js`** — edit a country's bollard colour and every
+chapter that draws it updates. Nothing in `guide.js` knows what a bollard looks like.
+
+Prose takes a tiny inline markup — `**bold**` and `[[country-id]]`. The latter becomes a
+chip with the country's flag that jumps straight into Browse with that country open
+(`openCountry()` in `app.js`), which is the whole reason the guidebook lives inside the app
+instead of being a markdown file. Text is escaped before the markup runs, so the markup is
+the only thing that can produce a tag; a `[[typo]]` renders as literal text rather than
+disappearing.
+
+Showing the rows that **cannot** split a pair is half the lesson: on Germany vs Austria the
+plate row is deliberately there, dimmed, because those plates will never help you and the
+bollard's black cap is the whole difference.
+
+The course is complete — **12 chapters**, 35 drills, every referenced country checked
+against `data.js`. The map guides are next.
+
+A chapter with no `body` is one that hasn't been written yet. It still appears in the rail,
+greyed and flagged **Drafting**, so the shape of the whole book is visible from the first
+screen — and its page says so plainly instead of 404ing.
+
+Map guides describe composition **qualitatively and dated** ("heavy US/Russia/Brazil
+weighting", as of August 2026) rather than quoting location counts. Community maps are
+re-cut constantly and a hard number in here would be wrong within a month.
 
 ---
 
