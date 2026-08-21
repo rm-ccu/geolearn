@@ -487,15 +487,107 @@ const SELF_TEST = [
 // be wrong within a month.
 const GUIDE_MAPS = [
   { id: "world", name: "World", flavour: "Official", url: "https://www.geoguessr.com/maps/world",
-    blurb: "The default map, and the one every other map is a reaction to." },
+    blurb: "The default map, and the one every other map is a reaction to.",
+    body: [
+      { t: "p", text: "The official World map draws from everything Google has driven, which means its shape is not a design decision — it is a **map of where the Street View car has been**. That single fact explains almost everything about how it plays." },
+
+      { t: "p", text: "Of the 218 entries in this guide, **122 can appear here and 96 cannot**, because the other 96 have no official coverage at all. Egypt, China, Pakistan, Cuba, Tanzania and every small Pacific and Caribbean state are simply not in the deck. That is the most useful thing you can know about this map, and it is worth internalising before any clue work: a country you cannot be dropped in is never the answer." },
+
+      { t: "callout", tone: "tip", label: "Use the coverage filter in your head", text: "Torn between two candidates? Check whether one of them is photospheres-only. On this map that ends the argument immediately. The globe in Browse shades the two coverage types differently for exactly this reason." },
+
+      { t: "p", text: "**Where the drops cluster.** Coverage follows roads and roads follow people, so the United States, Russia, Brazil, Japan, Australia and western Europe carry far more of the map than their share of the world's land. As of August 2026 that weighting has been stable for years. The practical consequence is that a handful of countries repay study enormously — and that the United States needs a level of detail no other country does, which is why it has {{united-states|a guide of its own}}." },
+
+      { t: "p", text: "**Roadside nothing is normal.** A large share of official coverage is empty rural road: no signs, no buildings, no people. This map rewards the clues that survive that — the car, the paint, the poles, the vegetation and the sun — far more than the ones that need a town." },
+
+      { t: "steps", label: "How to play it", items: [
+        "**Run the full scan before moving.** Most rounds have more information in the first panorama than players use.",
+        "**Move along the road, not away from it.** Junctions, bus stops and bridges concentrate signage.",
+        "**Learn the big six first.** The US, Russia, Brazil, Japan, Australia and France repay study out of all proportion.",
+        "**Accept the region.** On a big empty drop, a confident country and a rough region beats a slow guess at the town."
+      ]}
+    ]
+  },
   { id: "a-community-world", name: "A Community World", flavour: "Community", url: "https://www.geoguessr.com/maps/62a44b22040f04bd36e8a914",
-    blurb: "The handpicked world map used for ranked duels." },
+    blurb: "The handpicked world map competitive play has settled on.",
+    body: [
+      { t: "p", text: "A Community World is a world map of over 100,000 handpicked locations, assembled by more than a hundred experienced players and map makers. It is the map most people mean when they say they are practising, and the one competitive play has largely settled on." },
+
+      { t: "p", text: "The difference from the official World map is **curation**. Locations were chosen rather than sampled, which pulls the map toward drops that are actually solvable: more villages and towns, fewer kilometres of identical forest, and a spread across countries that feels deliberate rather than accidental." },
+
+      { t: "callout", tone: "tip", label: "What curation changes for you", text: "More drops have something to read. That moves the value from the clues that survive emptiness — car, paint, poles — toward **script, signage and shopfronts**. If you find the course's language chapter harder than the bollard chapter, this is the map that punishes it." },
+
+      { t: "p", text: "It is still built from official coverage, so the 96 photospheres-only entries remain out of the deck. What changes is the weighting inside the 122 that are in: countries that feel rare on the official map turn up at a rate you will notice, so the tail is worth more study here than it is there." },
+
+      { t: "steps", label: "Playing it in duels", items: [
+        "**Commit early.** Duels reward a fast confident country far more than a slow precise pin.",
+        "**Guess the country, then place inside it.** A wrong country is usually a lost round; a wrong region rarely is.",
+        "**Do not chase the last clue.** If the scan gave you a country at 90%, take it.",
+        "**Know the trap pairs cold.** At speed, the pairs from the last chapter are what actually decide rounds."
+      ]},
+
+      { t: "p", text: "Composition described qualitatively and as of August 2026: community maps are re-cut regularly, and a location count quoted to the exact number would be wrong within a month." }
+    ]
+  },
   { id: "famous-places", name: "Famous Places", flavour: "Official", url: "https://www.geoguessr.com/maps/famous-places",
-    blurb: "A different skill entirely: recognise the landmark, not the roadside." },
+    blurb: "A different skill entirely: recognise the landmark, not the roadside.",
+    body: [
+      { t: "p", text: "Famous Places drops you at the world's landmarks — natural wonders and built monuments — and it is barely the same game. The roadside identification the rest of this course teaches is your **fallback** here, not your first move. The first move is recognition." },
+
+      { t: "callout", tone: "tip", label: "The one thing that makes this map different", text: "Landmarks are exactly where user photospheres exist. That means countries with **no official coverage at all** can and do appear here — Egypt, China, Iran, Cuba, Tanzania. The 96 entries this guide marks as photospheres-only are effectively unlocked on this map, and nowhere else." },
+
+      { t: "p", text: "So the coverage tiebreaker that serves you well everywhere else is actively wrong here. If a scene looks like Giza, it is Giza; do not talk yourself out of it because Egypt has no car coverage." },
+
+      { t: "p", text: "**When you do not recognise the place**, fall back to the scan. You are usually still standing on a path or a road, with signage, script, bollards and plates within reach. Interpretive panels at monuments are especially generous: they are often multilingual, and the language order tells you which country you are in." },
+
+      { t: "steps", label: "How to study for it", items: [
+        "**Learn landmarks by country, not alphabetically** — it converts recognition failures into country guesses.",
+        "**Watch the crowd.** Dress, script on signage and tour-group languages are all readable at a monument.",
+        "**Read the interpretive boards.** Multilingual panels with the local language first are a direct answer.",
+        "**Remember the photosphere unlock.** Half the countries that never appear elsewhere live on this map."
+      ]}
+    ]
+  },
   { id: "urban-world", name: "Urban and balanced worlds", flavour: "Community",
-    blurb: "City-weighted world maps, and what changes when every drop has signage." },
+    blurb: "City-weighted and evenly-weighted world maps, and what changes when every drop has signage.",
+    body: [
+      { t: "p", text: "A whole family of community maps exists to correct the official map's bias. They come in two broad flavours, and they demand nearly opposite things from you." },
+
+      { t: "p", text: "**Balanced worlds** flatten the country weighting so that every country appears at a similar rate, rather than in proportion to how much Google has driven it. The immediate effect is that the tail matters: the countries you can currently identify only by elimination will now show up as often as Germany does." },
+
+      { t: "p", text: "**Urban worlds** drop you in towns and cities only. Signage, shopfronts, plates and architecture are everywhere; the empty-road clues you leaned on — paint, poles, vegetation — mostly stop mattering." },
+
+      { t: "callout", tone: "warn", label: "Urban maps punish a bollard-first habit", text: "If your instinct on landing is to look for a post at the roadside, an urban map will feel strangely hard. Retrain the first move to **read something** — a shopfront, a van, a street sign — because in a city there is always text." },
+
+      { t: "steps", label: "What to study for these", items: [
+        "**Scripts and diacritics**, well past the easy ones. Balanced maps put the rare alphabets in front of you constantly.",
+        "**Shopfront and telecom branding**, which is national and reads from across a street.",
+        "**Architecture and street furniture** — kerb style, bollard type in pedestrian zones, balcony and window shapes.",
+        "**Domains and phone codes**, which are dense in cities and almost absent in the countryside."
+      ]},
+
+      { t: "p", text: "Composition here is qualitative on purpose: these maps are re-cut often, and there is no single canonical one. Read the map's own description before you play it — the maker usually states the weighting rule outright." }
+    ]
+  },
   { id: "country-streaks", name: "Country streaks", flavour: "Format",
-    blurb: "Not a map but a format — and it rewards the opposite instincts to duels." },
+    blurb: "Not a map but a format — and it rewards the opposite instincts to duels.",
+    body: [
+      { t: "p", text: "A country streak asks only for the country, and keeps asking until you get one wrong. The scoring is binary and the clock usually is not the constraint, which inverts almost everything duels taught you." },
+
+      { t: "callout", tone: "tip", label: "The whole strategy in one line", text: "**Never guess before the scan is dry.** A streak has no partial credit, so a fast 80% guess is worth strictly less than a slow 99% one. If moving for two minutes finds you a road sign, move for two minutes." },
+
+      { t: "p", text: "This is the format where the course's discipline pays off most literally. Run all six steps. Drive to the junction. Find the van, read the domain, check the plate. The clue that ends the round is often three hundred metres up the road." },
+
+      { t: "steps", label: "Streak habits", items: [
+        "**Drive toward signage**, not scenery: junctions, town edges, petrol stations, bus stops.",
+        "**Confirm with a second clue** before committing. One clue is a hypothesis; two agreeing is an answer.",
+        "**Use the {{putting-it-together|coverage tiebreaker}}.** Between two candidates, the one with official coverage is the one the map can actually drop you in.",
+        "**Know your trap pairs**, because a streak dies on Italy/Albania and Kenya/Uganda far more often than on hard countries.",
+        "**Bank the boring ones fast.** Germany, the US and Brazil should cost you seconds, leaving time for the rounds that need it."
+      ]},
+
+      { t: "p", text: "The failure mode to watch for is impatience after a long streak: the longer it runs, the more it costs to lose, and the more tempting it gets to guess quickly and move on. Slow down as the streak grows, not the other way round." }
+    ]
+  },
   {
     id: "united-states", name: "United States", flavour: "Official + community",
     blurb: "The country is free. All the work is in the state — and the route marker does most of it.",
@@ -546,5 +638,23 @@ const GUIDE_MAPS = [
     ]
   },
   { id: "flags", name: "Flags of the world", flavour: "Training",
-    blurb: "Flag recall as a drill, using the 217 flags this site already ships." }
+    blurb: "Flag recall as a drill — and flags are a real in-game clue, not just a quiz.",
+    body: [
+      { t: "p", text: "Flag maps are usually treated as a quiz rather than practice, which undersells them. Flags fly in the game constantly: outside schools, town halls, police stations, petrol stations, car dealerships and hotels, and on bumper stickers and shop awnings. A flag at the end of a village street can end a round on its own." },
+
+      { t: "p", text: "This site ships the **real flag of every entry in the dataset**, at the top of every country page and on every card, so Browse doubles as a flag drill surface. Search a region, scan the flags, then check yourself against the names." },
+
+      { t: "steps", label: "Learn them in families, not alphabetically", items: [
+        "**Nordic crosses** — the offset cross is the family; the colours name the country.",
+        "**Pan-Arab colours** — red, white, black and green, recombined; learn the arrangement and the emblem.",
+        "**Pan-African colours** — red, gold and green; the star, arrangement and shade do the work.",
+        "**Union Jack cantons** — a small British flag in the corner narrows you to a short list, then the rest of the field decides.",
+        "**Tricolours** — the largest and worst family; group them by orientation first, then by which colours."
+      ]},
+
+      { t: "callout", tone: "warn", label: "A flag is not proof of the country", text: "Embassies, hotels, international chains and border towns all fly other countries' flags, and diaspora communities fly theirs. Treat a single flag as strong evidence, not as an answer — and check that it agrees with the driving side and the script before you commit." },
+
+      { t: "p", text: "The pairs worth learning deliberately are the ones the eye slides over: Chad and Romania, Indonesia and Monaco, Ireland and Côte d'Ivoire, Netherlands and Luxembourg, Australia and New Zealand. Every one of them is a real in-game trap." }
+    ]
+  }
 ];

@@ -995,6 +995,19 @@ nav.tabs button:not(.active):hover {
 }
 
 .country-chip:hover { border-color: var(--lane-yellow); color: var(--lane-yellow); }
+
+/* A link from one chapter to another. Reads as a link rather than a chip,
+   because it moves you inside the book instead of out to the dataset. */
+.guide-link {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  color: var(--lane-yellow);
+  border-bottom: 1px solid rgba(242,193,78,0.4);
+}
+
+.guide-link:hover { border-bottom-color: var(--lane-yellow); }
 .country-chip .flag { border-radius: 2px; }
 
 .guide-swatches { margin: 0 0 24px; }

@@ -31,7 +31,11 @@ function inline(text) {
         title="Open ${escapeHtml(c.name)} in Browse">${flagImg(c.code, c.name, 13)}${escapeHtml(c.name)}</button>`;
     })
     .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
-    .replace(/`([^`]+)`/g, '<span class="mono">$1</span>');
+    .replace(/`([^`]+)`/g, '<span class="mono">$1</span>')
+    // {{entry-id|label}} — a link to another chapter or map guide. The delegated
+    // handler already routes [data-guide], so this needs no wiring of its own.
+    .replace(/\{\{([a-z0-9-]+)\|([^}]+)\}\}/g, (whole, id, label) =>
+      guideEntry(id) ? `<button type="button" class="guide-link" data-guide="${id}">${label}</button>` : whole);
 }
 
 // ---------- Blocks ----------

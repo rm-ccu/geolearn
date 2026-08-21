@@ -114,19 +114,29 @@ The indirection is the point: `swatches` calls `bollardSVG()` and `diff` calls `
 so **a lesson cannot drift away from `data.js`** — edit a country's bollard colour and every
 chapter that draws it updates. Nothing in `guide.js` knows what a bollard looks like.
 
-Prose takes a tiny inline markup — `**bold**`, `` `code` ``, and `[[country-id]]`. The latter becomes a
+Prose takes a tiny inline markup — `**bold**`, `` `code` ``, `[[country-id]]` and
+`{{entry-id|label}}`. The third becomes a
 chip with the country's flag that jumps straight into Browse with that country open
 (`openCountry()` in `app.js`), which is the whole reason the guidebook lives inside the app
 instead of being a markdown file. Text is escaped before the markup runs, so the markup is
 the only thing that can produce a tag; a `[[typo]]` renders as literal text rather than
-disappearing.
+disappearing. The fourth links one part of the book to another — the World guide points at
+the US guide, the streak guide at the chapter that teaches the coverage tiebreaker — and it
+needs no wiring, because the delegated handler already routes anything carrying
+`data-guide`.
 
 Showing the rows that **cannot** split a pair is half the lesson: on Germany vs Austria the
 plate row is deliberately there, dimmed, because those plates will never help you and the
 bollard's black cap is the whole difference.
 
-The course is complete — **12 chapters**, 35 drills and a scored **self-test**, with every
-referenced country checked against `data.js`. The map guides are next.
+The book is complete: **12 chapters**, 35 drills, a scored **self-test**, and **7 map
+guides** — World, A Community World, Famous Places, urban and balanced worlds, country
+streaks, the United States and flags. Every country, state, chapter link and drill answer is
+checked against `data.js` and `states.js`.
+
+Map guides describe composition **qualitatively and dated**, and link out to the map only
+where the URL is verified — three of the seven do. Community maps are re-cut constantly, so
+a location count quoted exactly would be wrong within a month.
 
 The self-test is 15 fresh scenarios — nothing repeated from the chapter drills — each with
 four candidate countries. The wrong options are **generated, not authored**: they come from
@@ -145,13 +155,9 @@ straight back to the reading that would have prevented it, and the end-of-test v
 exactly which chapters to revisit. Answers live in memory only — reload and the test is
 fresh, navigate to a chapter and back and your progress is still there.
 
-A chapter with no `body` is one that hasn't been written yet. It still appears in the rail,
-greyed and flagged **Drafting**, so the shape of the whole book is visible from the first
-screen — and its page says so plainly instead of 404ing.
-
-Map guides describe composition **qualitatively and dated** ("heavy US/Russia/Brazil
-weighting", as of August 2026) rather than quoting location counts. Community maps are
-re-cut constantly and a hard number in here would be wrong within a month.
+Nothing is drafting now, but the mechanism stays for whatever gets added next: a chapter
+with no `body` still appears in the rail, greyed and flagged **Drafting**, so the shape of
+the book is visible from the first screen — and its page says so plainly instead of 404ing.
 
 
 ### US states and route markers
