@@ -10,6 +10,7 @@
   --lane-yellow: #f2c14e;
   --sign-blue: #3b6ea8;
   --bollard-red: #c1443c;
+  --confirm-green: #4f9d5d;
   --radius: 10px;
 }
 
@@ -1156,6 +1157,143 @@ nav.tabs button:not(.active):hover {
 }
 
 .guide-nav-btn .name { font-size: 14px; }
+
+/* ---------- Self-test ---------- */
+
+.guide-test { margin-top: 26px; }
+
+/* Sticky so the score stays with you through fifteen questions. */
+.test-score {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 14px 18px;
+  margin-bottom: 16px;
+}
+
+.test-count {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 26px;
+  line-height: 1;
+  color: var(--lane-yellow);
+}
+
+.test-label { font-size: 14px; line-height: 1.5; color: var(--chalk-dim); flex: 1; min-width: 180px; }
+
+.test-score.is-complete {
+  border-color: rgba(242,193,78,0.45);
+  background: linear-gradient(135deg, rgba(242,193,78,0.12), rgba(242,193,78,0.02)), var(--surface);
+}
+
+.test-missed {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  width: 100%;
+  font-size: 13px;
+  color: var(--chalk-dim);
+}
+
+.test-reset {
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--chalk-dim);
+  font-family: 'Barlow Condensed', sans-serif;
+  text-transform: uppercase;
+  font-size: 12.5px;
+  letter-spacing: 0.05em;
+  padding: 5px 14px;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.test-reset:hover { border-color: var(--lane-yellow); color: var(--lane-yellow); }
+
+.test-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+
+.test-q {
+  background: var(--surface-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+}
+
+.test-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--chalk-dim);
+  opacity: 0.8;
+  margin-bottom: 8px;
+}
+
+.test-prompt { font-size: 15px; line-height: 1.62; margin-bottom: 14px; }
+
+.test-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 8px;
+}
+
+.test-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 9px 12px;
+  color: var(--chalk);
+  font-family: inherit;
+  font-size: 14px;
+  text-align: left;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.test-option:not(:disabled):hover { border-color: var(--lane-yellow); }
+
+/* After answering, every button stays visible: the right one, the one you took,
+   and the two you passed over. Seeing which trap you fell for is the lesson. */
+.test-option:disabled { cursor: default; }
+.test-option.is-right { border-color: var(--confirm-green); background: rgba(79,157,93,0.16); }
+.test-option.is-wrong { border-color: var(--bollard-red); background: rgba(193,68,60,0.16); }
+.test-option.is-dim { opacity: 0.45; }
+
+.test-result { margin-top: 14px; }
+
+.test-verdict-line {
+  font-family: 'Barlow Condensed', sans-serif;
+  text-transform: uppercase;
+  font-size: 15px;
+  letter-spacing: 0.04em;
+  margin-bottom: 6px;
+}
+
+.test-result.is-right .test-verdict-line { color: var(--confirm-green); }
+.test-result.is-wrong .test-verdict-line { color: var(--bollard-red); }
+.test-result p { margin: 0; font-size: 14px; line-height: 1.6; color: var(--chalk-dim); }
+
+.test-revisit {
+  margin-top: 10px;
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--chalk-dim);
+  font-family: inherit;
+  font-size: 13px;
+  padding: 4px 12px;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.test-revisit:hover { border-color: var(--lane-yellow); color: var(--lane-yellow); }
+.test-missed .test-revisit { margin-top: 0; }
 
 footer.foot {
   text-align: center;

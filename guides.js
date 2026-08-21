@@ -398,8 +398,89 @@ const COURSE = [
         { q: "Right-hand traffic, Spanish, Caribbean streetscape, mopeds everywhere, and no American route shields anywhere.", a: "dominican republic", why: "Puerto Rico would show US traffic hardware and route shields; without them, this is the Dominican Republic." }
       ]}
     ]
+  },
+  {
+    id: "self-test",
+    title: "Self-test",
+    test: true,
+    goal: "Fifteen rounds, four candidates each. Score yourself, and find out which chapters still owe you work.",
+    body: [
+      { t: "p", text: "Every question below is a round described in words: a handful of clues, and four countries that could plausibly produce them. The wrong answers are drawn from each country's own confusion list, so none of them are free." },
+      { t: "p", text: "Nothing here repeats a drill from the chapters — this is fresh material. Answer all fifteen and the verdict at the end tells you which chapters to go back to." },
+      { t: "test" }
+    ]
   }
 ];
+
+// The capstone. Each question names the chapter it comes from, so a wrong answer
+// can point at the reading that fixes it rather than just being marked wrong.
+// Wrong options are generated from the answer's own `confusedWith` list — see
+// testOptions() in guide.js — so the distractors are always genuine traps.
+const SELF_TEST = [
+  { ch: "driving-side", a: "south africa",
+    q: "Left-hand traffic. Blue direction signs carry yellow-bordered route markers, and a shopfront across the road is lettered in Afrikaans as well as English.",
+    why: "Botswana and Namibia both borrow South African signage, but not the language. Afrikaans beside English on left-hand roads is the reliable confirm." },
+
+  { ch: "bollards", a: "czechia",
+    q: "Right-hand traffic, blue direction signs, and a flat white bollard whose reflector band is a startlingly bright fluorescent orange. A town name on a sign contains ř.",
+    why: "The orange band on an otherwise German-looking post is near-unique, and ř is a sound and a letter essentially confined to Czech." },
+
+  { ch: "signs", a: "sri lanka",
+    q: "Left-hand traffic in tropical greenery. One roadside board carries three scripts stacked on top of each other, and a passing car shows a white plate at the front and a yellow one at the back.",
+    why: "Sinhala, Tamil and English on one board is a national standard, and the split plate colours confirm it." },
+
+  { ch: "script", a: "kazakhstan",
+    q: "Cyrillic signage, right-hand traffic, and flat treeless steppe running to the horizon in every direction with a dead-straight road through it.",
+    why: "Cyrillic narrows it to about eight countries; that much empty steppe with no forest and no relief points at Kazakhstan rather than Russia's wooded regions." },
+
+  { ch: "bollards", a: "france",
+    q: "Right-hand traffic. A rounded white bollard with a red cap and a red band wrapping the post, and a parked car whose plate ends in a two-digit department number.",
+    why: "The rounded red-capped post is French, and the department number on the end of the plate is a French format detail no neighbour copies." },
+
+  { ch: "plates", a: "singapore",
+    q: "Left-hand traffic, black plates with white characters, and unbroken high-rise in every direction with signage in English, Chinese and Tamil.",
+    why: "Black plates put you in Malaysia, Singapore or Brunei; wall-to-wall city with four official languages on the signs is Singapore." },
+
+  { ch: "bollards", a: "switzerland",
+    q: "Right-hand traffic through steep mountains, German on the signs, red domed bollards at the roadside, and a white plate with no blue band on it.",
+    why: "German plus mountains suggests Germany or Austria, but both carry the EU band. No band, and a red domed post, is Switzerland." },
+
+  { ch: "signs", a: "argentina",
+    q: "Right-hand traffic, Spanish signage on blue direction signs, dead-flat farmland to the horizon, and a plate with a blue strip across the top.",
+    why: "Blue direction signs separate it from Chile's green ones, and the flat farmland rules out the country pinned against the Andes." },
+
+  { ch: "plates", a: "nepal",
+    q: "Left-hand traffic on a narrow road cut into a terraced hillside, Devanagari script on the signs, and red plates with white characters.",
+    why: "Devanagari means Nepal or India; red private plates are Nepal's, since India's are white or yellow." },
+
+  { ch: "script", a: "laos",
+    q: "Right-hand traffic, a round flowing script that reads like a simplified Thai, and orange plates with black characters on the vehicles.",
+    why: "The script family places you in South East Asia and the orange plate is a combination none of the neighbours use. Thailand also drives on the left." },
+
+  { ch: "plates", a: "namibia",
+    q: "Left-hand traffic, English signage, dry desert scrub in every direction, and yellow plates beginning with N.",
+    why: "Botswana's plates start with B and are white at the front; the N prefix on yellow is Namibia." },
+
+  { ch: "domains", a: "belgium",
+    q: "Right-hand traffic. A direction sign gives the same town name twice in two languages, and a parked van's door carries a web address ending .be.",
+    why: "Bilingual French and Dutch on one sign is Belgium's signature, and the domain settles it outright." },
+
+  { ch: "script", a: "hong kong",
+    q: "Left-hand traffic, Traditional Chinese characters with English beneath them, and dense high-rise towers on steep ground. No Portuguese anywhere.",
+    why: "Traditional Chinese with left-hand traffic means Hong Kong or Macau; Macau pairs Chinese with Portuguese, not English." },
+
+  { ch: "signs", a: "poland",
+    q: "Right-hand traffic. The village sign is white with a red border and a small locator map in the corner, and the name on it contains ł and ż.",
+    why: "The red-bordered village sign with its locator map is Polish, and those two letters confirm it over Czech or Slovak." },
+
+  // Ireland is the trap worth setting here: it matches every clue except the one
+  // that matters. New Zealand's own confusion list is Pitcairn and American Samoa,
+  // which nobody would pick, so this question names its candidates.
+  { ch: "poles", a: "new zealand", options: ["australia", "ireland", "south africa"],
+    q: "Left-hand traffic, yellow diamond warning signs, wooden poles along the road, damp temperate forest rather than dry scrub — and the midday sun sitting due north.",
+    why: "Ireland matches the signs, the traffic and the greenery, but the sun to the north puts you in the southern hemisphere. That leaves Australia or New Zealand, and the wet temperate forest is New Zealand." },
+];
+
 
 // Map guides. Composition is described qualitatively and dated on purpose —
 // community maps are re-cut constantly, and a hard location count in here would

@@ -101,6 +101,7 @@ Chapters live in `guides.js` as **typed blocks**, not HTML:
 | `swatches` | Real bollard/sign/plate swatches for a list of country ids |
 | `diff` | A two-country comparison, same rows the Compare view builds. `rows` picks the fields — `["bollard", "plates"]` for a European pair, `["plates", "signs"]` for an East African one |
 | `drills` | Click-to-reveal practice questions, answers linked to countries |
+| `test` | The scored self-test, drawn from the `SELF_TEST` array |
 
 The indirection is the point: `swatches` calls `bollardSVG()` and `diff` calls `fieldRow()`,
 so **a lesson cannot drift away from `data.js`** — edit a country's bollard colour and every
@@ -117,8 +118,25 @@ Showing the rows that **cannot** split a pair is half the lesson: on Germany vs 
 plate row is deliberately there, dimmed, because those plates will never help you and the
 bollard's black cap is the whole difference.
 
-The course is complete — **12 chapters**, 35 drills, every referenced country checked
-against `data.js`. The map guides are next.
+The course is complete — **12 chapters**, 35 drills and a scored **self-test**, with every
+referenced country checked against `data.js`. The map guides are next.
+
+The self-test is 15 fresh scenarios — nothing repeated from the chapter drills — each with
+four candidate countries. The wrong options are **generated, not authored**: they come from
+the answer's own `confusedWith` list, so every distractor is a country people genuinely mix
+it up with. Short lists are padded from second-degree confusions (a neighbour of a
+neighbour) before falling back to the region, and a question can override the set entirely
+with an `options` field when the dataset's confusions are not the interesting comparison —
+the New Zealand question names Ireland, which matches every clue except the sun's position.
+
+Option order is rotated by a seed derived from the question number *and* the answer's name.
+Rotating by the index alone put the correct answer in a visible 0, 3, 2, 1 cycle that could
+be read off without knowing any geography.
+
+Each question carries the `ch` of the chapter it comes from, so a wrong answer offers a link
+straight back to the reading that would have prevented it, and the end-of-test verdict lists
+exactly which chapters to revisit. Answers live in memory only — reload and the test is
+fresh, navigate to a chapter and back and your progress is still there.
 
 A chapter with no `body` is one that hasn't been written yet. It still appears in the rail,
 greyed and flagged **Drafting**, so the shape of the whole book is visible from the first

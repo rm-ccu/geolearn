@@ -137,6 +137,140 @@ function drillsBlock(b) {
     </section>`;
 }
 
+// ---------- Self-test ----------
+
+// Answers live in memory only: reload and the test is fresh. Navigating to
+// another chapter and back keeps your progress, which is the behaviour you
+// want mid-test.
+let testState = { answers: {} };
+
+// Three wrong options from the answer's own confusion list, so every distractor
+// is a country people genuinely mix it up with. A few countries have fewer than
+// three classic confusions, so the shortfall is padded from their region.
+function testOptions(item, index) {
+  const c = byId(item.a);
+  // A question can name its own traps when the dataset's confusion list is not
+  // the interesting comparison for that particular set of clues.
+  const wrong = item.options ? item.options.slice(0, 3) : (c.confusedWith || []).filter(id => {
+    const o = byId(id);
+    return o && o.coverage === "official";
+  }).slice(0, 3);
+  // Short lists are padded from the countries those confusions are themselves
+  // confused with — a neighbour of a neighbour is a far better trap than the
+  // next country in the region happens to be. Region order is the last resort.
+  const take = (id) => {
+    const o = byId(id);
+    if (wrong.length < 3 && o && o.coverage === "official" && o.id !== c.id && !wrong.includes(o.id)) {
+      wrong.push(o.id);
+    }
+  };
+  if (wrong.length < 3) wrong.slice().forEach(id => (byId(id).confusedWith || []).forEach(take));
+  if (wrong.length < 3) COUNTRIES.filter(o => o.region === c.region).forEach(o => take(o.id));
+  // Rotate so the answer is not always first, while keeping the order stable
+  // across re-renders — a live shuffle would move buttons underneath a click.
+  // The offset comes from the answer's name as well as the question number,
+  // because rotating by the index alone puts the answer in a visible 0,3,2,1
+  // cycle that can be read off without knowing any geography.
+  const all = [c.id, ...wrong];
+  const seed = index * 7 + [...c.id].reduce((n, ch) => n + ch.charCodeAt(0), 0);
+  const k = seed % all.length;
+  return all.slice(k).concat(all.slice(0, k));
+}
+
+function renderTestQuestion(item, i) {
+  const chosen = testState.answers[i];
+  const answered = chosen !== undefined;
+  const correct = answered && chosen === item.a;
+
+  const options = testOptions(item, i).map(id => {
+    const c = byId(id);
+    const state = !answered ? ""
+      : id === item.a ? "is-right"
+      : id === chosen ? "is-wrong" : "is-dim";
+    return `<button type="button" class="test-option ${state}" data-choice="${id}" data-q="${i}"
+      ${answered ? "disabled" : ""}>${flagImg(c.code, c.name, 15)}${escapeHtml(c.name)}</button>`;
+  }).join("");
+
+  const chapter = COURSE.find(ch => ch.id === item.ch);
+  const result = answered ? `
+    <div class="test-result ${correct ? "is-right" : "is-wrong"}">
+      <div class="test-verdict-line">${correct ? "Correct" : "Not quite &mdash; " + escapeHtml(byId(item.a).name)}</div>
+      <p>${inline(item.why)}</p>
+      ${correct ? "" : `<button type="button" class="test-revisit" data-guide="${item.ch}">Revisit ${escapeHtml(chapter ? chapter.title : item.ch)} &rarr;</button>`}
+    </div>` : "";
+
+  return `
+    <li class="test-q ${answered ? "is-answered" : ""}" id="test-q-${i}">
+      <div class="test-head"><span class="test-num">${String(i + 1).padStart(2, "0")}</span></div>
+      <div class="test-prompt">${inline(item.q)}</div>
+      <div class="test-options">${options}</div>
+      ${result}
+    </li>`;
+}
+
+function testScoreHTML() {
+  const answers = testState.answers;
+  const done = Object.keys(answers).length;
+  const right = SELF_TEST.filter((item, i) => answers[i] === item.a).length;
+
+  if (done < SELF_TEST.length) {
+    return `
+      <div class="test-score">
+        <span class="test-count">${done} / ${SELF_TEST.length}</span>
+        <span class="test-label">answered${done ? ` &middot; ${right} correct` : ""}</span>
+        ${done ? `<button type="button" class="test-reset" id="testReset">Start over</button>` : ""}
+      </div>`;
+  }
+
+  const verdict =
+    right === 15 ? "Perfect. That is exactly the standard this course is aiming at — the country, every round."
+    : right >= 12 ? "Strong. You would take the country in the large majority of rounds; the gaps below are worth an hour."
+    : right >= 8 ? "A solid base with real gaps. Work the chapters listed below and run the test again."
+    : "The scan is not automatic yet. Go back through the course in order — the chapters below are where this test found the holes.";
+
+  // Wrong answers point at the chapters that would have prevented them.
+  const missed = [...new Set(SELF_TEST.filter((item, i) => answers[i] !== item.a).map(item => item.ch))];
+  const links = missed.map(id => {
+    const ch = COURSE.find(c => c.id === id);
+    return `<button type="button" class="test-revisit" data-guide="${id}">${escapeHtml(ch ? ch.title : id)}</button>`;
+  }).join("");
+
+  return `
+    <div class="test-score is-complete">
+      <span class="test-count">${right} / ${SELF_TEST.length}</span>
+      <span class="test-label">${escapeHtml(verdict)}</span>
+      ${missed.length ? `<div class="test-missed"><span>Revisit:</span>${links}</div>` : ""}
+      <button type="button" class="test-reset" id="testReset">Start over</button>
+    </div>`;
+}
+
+function testBlock() {
+  return `
+    <section class="guide-test">
+      <div id="testScore">${testScoreHTML()}</div>
+      <ol class="test-list" id="testList">
+        ${SELF_TEST.map((item, i) => renderTestQuestion(item, i)).join("")}
+      </ol>
+    </section>`;
+}
+
+// Answering re-renders only the question that changed and the score, so the page
+// does not jump underneath the click.
+function answerTest(i, choice) {
+  if (testState.answers[i] !== undefined) return;
+  testState.answers[i] = choice;
+  const li = document.getElementById(`test-q-${i}`);
+  if (li) li.outerHTML = renderTestQuestion(SELF_TEST[i], i);
+  document.getElementById("testScore").innerHTML = testScoreHTML();
+}
+
+function resetTest() {
+  testState = { answers: {} };
+  const list = document.getElementById("testList");
+  if (list) list.innerHTML = SELF_TEST.map((item, i) => renderTestQuestion(item, i)).join("");
+  document.getElementById("testScore").innerHTML = testScoreHTML();
+}
+
 function renderBlock(b) {
   switch (b.t) {
     case "p":
@@ -156,6 +290,7 @@ function renderBlock(b) {
     case "swatches": return swatchesBlock(b);
     case "diff":     return diffBlock(b);
     case "drills":   return drillsBlock(b);
+    case "test":     return testBlock();
     default:         return "";
   }
 }
@@ -210,9 +345,9 @@ function renderGuideArticle() {
        </button>`
     : `<span></span>`;
 
-  const kicker = o.kind === "course"
-    ? `Chapter ${String(COURSE.findIndex(c => c.id === e.id) + 1).padStart(2, "0")}`
-    : `${escapeHtml(e.flavour)} map`;
+  const kicker = o.kind !== "course" ? `${escapeHtml(e.flavour)} map`
+    : e.test ? "Final test"
+    : `Chapter ${String(COURSE.findIndex(c => c.id === e.id) + 1).padStart(2, "0")}`;
 
   const meta = o.kind === "course" && e.minutes ? `<span class="guide-mins">${e.minutes} min study</span>` : "";
   const link = o.kind === "map" && e.url
@@ -283,6 +418,11 @@ function initGuide() {
 
     const chip = ev.target.closest("[data-country]");
     if (chip) { openCountry(chip.dataset.country); return; }
+
+    const option = ev.target.closest(".test-option");
+    if (option) { answerTest(Number(option.dataset.q), option.dataset.choice); return; }
+
+    if (ev.target.closest("#testReset")) { resetTest(); return; }
 
     const reveal = ev.target.closest(".drill-reveal");
     if (reveal) {
