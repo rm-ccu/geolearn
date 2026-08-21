@@ -156,13 +156,10 @@ const ccTLD = (code) => "." + (TLD_EXCEPTIONS[code] || code.toLowerCase());
 // ---------- Coverage ----------
 
 // Whether Google's cars have actually driven the country, or whether the only
-// panoramas are user-uploaded photospheres. A standard game can't drop you in a
-// photosphere-only country, so it is worth saying so on the card.
+// panoramas are user-uploaded photospheres. The globe carries this as a dimmer
+// fill; the panel and the compare view say it in words.
 const isPhoto = (c) => c.coverage === "photospheres";
 const coverageLabel = (c) => isPhoto(c) ? "photospheres only" : "official coverage";
-const coverageTag = (c) => isPhoto(c)
-  ? `<span class="cov-tag" title="No official Street View coverage — only user-uploaded photospheres">PHOTO</span>`
-  : "";
 
 // ---------- State ----------
 
@@ -228,7 +225,6 @@ function renderGrid() {
       <div class="name-row">
         <h3>${c.name}</h3>
         <span class="side-tag">${c.driving === "left" ? "LEFT" : "RIGHT"}</span>
-        ${coverageTag(c)}
       </div>
       <div class="card-mid">
         ${bollardSVG(c, 48)}

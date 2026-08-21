@@ -104,10 +104,11 @@ the `coverage` field records:
   small Pacific and Caribbean state. They turn up in community maps that allow unofficial
   coverage, and nowhere else.
 
-Photosphere-only entries are marked three ways: a dashed `PHOTO` chip on the card, a
-dimmer fill on the globe with its own legend key, and a Coverage row in the compare view.
-Moldova is one of them — it has no official coverage despite being surrounded by countries
-that do, and its key tip says so.
+Photosphere-only entries read as a dimmer fill on the globe, with their own legend key —
+that is the at-a-glance version, and the country cards stay uncluttered. The detail panel
+says it in words next to the region, and the compare view has a Coverage row. Moldova is
+one of them: no official coverage despite being surrounded by countries that have it, and
+its key tip says so.
 
 One oddity worth knowing: **Akrotiri and Dhekelia** has no ISO code of its own, so it
 carries `GB` — which means it shows the Union Flag and a `.uk` chip. It is a British base
@@ -324,7 +325,7 @@ swatches from them at runtime, so they need to be valid CSS colours, not names.
 | `code` | `string` | **ISO 3166-1 alpha-2**, uppercase. Drives the flag image and the ccTLD chip (`"CH"` → `flags/ch.png` and `.ch`). The ccTLD is the code lowercased, apart from a small exception table in `app.js` — `GB` → `.uk`. |
 | `region` | `string` | Grouping used to scope the list when a country is picked on the globe, and to tint that country's neighbours. Reuse an existing value unless you mean to add a category. Currently: `Europe`, `Eurasia`, `Asia`, `Africa`, `Oceania`, `North America`, `Central America`, `Caribbean`, `South America`. |
 | `driving` | `"left"` \| `"right"` | Which side traffic drives on. Rendered as the LEFT/RIGHT tag on each card. |
-| `coverage` | `"official"` \| `"photospheres"` | Whether a Street View car has driven the country, or the only panoramas are user photospheres. Drives the PHOTO chip on the card, the dimmer fill on the globe, and a row in the compare view. |
+| `coverage` | `"official"` \| `"photospheres"` | Whether a Street View car has driven the country, or the only panoramas are user photospheres. Drives the dimmer fill on the globe, the line in the detail panel, and a row in the compare view. |
 | `bollard` | `object` | See below. |
 | `signs` | `object` | See below. |
 | `plates` | `object` | See below. |

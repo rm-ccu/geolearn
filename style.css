@@ -452,9 +452,7 @@ nav.tabs button:not(.active):hover {
   transform: translateY(-2px);
 }
 
-/* Name grows to fill, so the tags sit together at the right edge with a real gap
-   between them. space-between worked while there was only ever one tag; with two,
-   a narrow card left the name and both chips touching. */
+/* Name grows to fill so the tag sits at the right edge with a real gap. */
 .plate-card .name-row {
   display: flex;
   align-items: center;
@@ -462,10 +460,11 @@ nav.tabs button:not(.active):hover {
 }
 
 .plate-card .name-row h3 { flex: 1 1 auto; min-width: 0; }
-.plate-card .name-row .side-tag,
-.plate-card .name-row .cov-tag { flex: 0 0 auto; }
+.plate-card .name-row .side-tag { flex: 0 0 auto; }
 
-.plate-card h3 { font-size: 22px; }
+/* min-width:0 lets the name shrink inside the flex row; without a break rule a long
+   single word (AFGHANISTAN, LIECHTENSTEIN) would then overflow across the tag. */
+.plate-card h3 { font-size: 22px; min-width: 0; overflow-wrap: anywhere; }
 
 .side-tag {
   font-size: 11px;
@@ -475,20 +474,6 @@ nav.tabs button:not(.active):hover {
   padding: 2px 6px;
   font-family: 'JetBrains Mono', monospace;
   text-transform: none;
-}
-
-/* Marks a country whose only panoramas are user photospheres. Deliberately quieter
-   than .side-tag: it is a caveat, not a clue. */
-.cov-tag {
-  font-size: 9.5px;
-  letter-spacing: 0.06em;
-  color: var(--chalk-dim);
-  background: rgba(255,255,255,0.04);
-  border: 1px dashed var(--line);
-  border-radius: 4px;
-  padding: 2px 5px;
-  font-family: 'JetBrains Mono', monospace;
-  flex-shrink: 0;
 }
 
 /* Bollard and flag read as a pair on the left; only the ccTLD chip is pushed out to
