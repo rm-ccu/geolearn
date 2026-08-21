@@ -452,11 +452,18 @@ nav.tabs button:not(.active):hover {
   transform: translateY(-2px);
 }
 
+/* Name grows to fill, so the tags sit together at the right edge with a real gap
+   between them. space-between worked while there was only ever one tag; with two,
+   a narrow card left the name and both chips touching. */
 .plate-card .name-row {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 8px;
 }
+
+.plate-card .name-row h3 { flex: 1 1 auto; min-width: 0; }
+.plate-card .name-row .side-tag,
+.plate-card .name-row .cov-tag { flex: 0 0 auto; }
 
 .plate-card h3 { font-size: 22px; }
 
@@ -484,14 +491,16 @@ nav.tabs button:not(.active):hover {
   flex-shrink: 0;
 }
 
-/* Bollard, flag and ccTLD spread across the full width of the card. */
+/* Bollard and flag read as a pair on the left; only the ccTLD chip is pushed out to
+   the card edge. Spreading all three stranded them at single-column widths. */
 .card-mid {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 12px;
   width: 100%;
 }
+
+.card-mid .tld { margin-left: auto; }
 
 /* Real flag images out of flags/. Height is the driver — width follows from each
    flag's own proportions, so Switzerland stays square and the UK stays 2:1. */
