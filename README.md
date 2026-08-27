@@ -35,6 +35,7 @@ geolearn/
 ├── flags.js        # Flag <img> renderer + the per-flag aspect ratios
 ├── flags/          # The 217 real flag images (PNG, public domain)
 ├── shields.js      # Route-marker renderer — the US analogue of bollardSVG()
+├── picker.js       # The searchable country combobox the compare view runs on
 ├── guide.js        # Renders the guidebook from its typed blocks
 ├── app.js          # Renders the views, owns the state object, draws the SVG swatches
 ├── tools/
@@ -44,9 +45,9 @@ geolearn/
 └── .gitignore
 ```
 
-The scripts load in that order, so `COUNTRIES`, `WORLD_LAND`, `createGlobe()`, and
-`createFlightField()`, and `flagImg()` are all defined as plain globals by the time
-`app.js` runs. There are no ES modules and no
+The scripts load in that order, so `COUNTRIES`, `WORLD_LAND`, `createGlobe()`,
+`createFlightField()`, `flagImg()`, and `createCountryPicker()` are all defined as plain
+globals by the time `app.js` runs. There are no ES modules and no
 `fetch()`, which is why the page works from `file://`.
 
 The UI is three views inside one page — **browse**, **compare** (two countries side by
@@ -86,6 +87,35 @@ still **generated SVG** — `bollardSVG()`, `signSwatch()`, and `plateSwatch()` 
 from the hex colours in `data.js` — so `flags/` is the only place the project keeps
 image assets.
 
+
+### The compare view
+
+Two pickers and a stack of paired rows. Fields that match are dimmed, fields that differ
+get a yellow edge, and the point of the page is that you read only the bright ones.
+
+- **The pickers are a custom combobox** (`picker.js`), not a `<select>`. Two hundred and
+  eighteen options in a system dropdown is a scroll from Afghanistan to Zimbabwe with no
+  way to jump, and it can't draw a flag — the one thing you are picking a country by.
+  Each side opens a search field over a listbox: empty, the list is **grouped by region**
+  with the ccTLD in the margin; typing collapses it into one **ranked** list — exact
+  country code first, so `de` finds Germany, then name-start, word-start, anywhere in the
+  name, and finally the region, with the matched run marked. Arrow keys drive the
+  highlight through `aria-activedescendant` while focus stays in the field, so <kbd>↑</kbd>
+  <kbd>↓</kbd> <kbd>Enter</kbd> <kbd>Esc</kbd> all work without touching the mouse. Each
+  picker greys out whatever the other side is holding, because a country compared with
+  itself is a page of grey rows.
+- **The last row is a pair of globes.** `drawGlobeSnapshot()` in `globe.js` draws one
+  frozen frame per country onto a small canvas — the same projection and the same
+  prepared geometry as the interactive globe, with everything that moves left out. The
+  country is turned to face the viewer so it is always dead centre, land is filled rather
+  than wireframed (at 170px an outline is mush), and anything under 14° across gets a
+  locator ring, which is the only way Monaco is visible at all. Each globe is drawn in its
+  own side's accent — blue on the left, red on the right, matching the picker edge above
+  it — so neither column needs a label saying which country it belongs to.
+
+Both pickers and both globes read `state.compareLeft` / `state.compareRight`, which the
+`confusedWith` chips in Browse also set: clicking the compare half of a chip fills both
+sides and switches view in one go.
 
 ### The guidebook
 
@@ -382,6 +412,19 @@ which is what `buildPath()` returns a boolean for. Far-side detail fades out as 
 in — seeing through the shell is the point at globe scale, but close up the antipodes
 project straight over what you are looking at. A whole frame costs about half a
 millisecond.
+
+The unpacked geometry — rings converted to unit vectors once, so a frame only has to apply
+two rotations per point — lives in a memoised `globeGeometry()` at module scope rather than
+inside `createGlobe()`. The compare view's snapshots read the same arrays, so a second
+"globe" on the page costs nothing but the drawing.
+
+Two countries have a largest ring whose bounding box wraps the antimeridian, which makes
+the generated `c` and `s` meaningless: Russia and Fiji are both stored at 0°E with a span
+of 360°. The interactive globe survives that because you can drag; a snapshot can't, so
+`displayShape()` recovers the longitude as the mean direction of every vertex and the span
+as the widest angle any vertex makes with it. Latitude is left as generated — it never
+wraps, and Russia's Arctic coast carries enough vertices to drag a mean latitude up past
+71°N.
 
 ---
 

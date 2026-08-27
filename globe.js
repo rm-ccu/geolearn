@@ -9,6 +9,7 @@
 // zoom scales the sphere radius; the canvas simply crops whatever spills out.
 
 const DEG = Math.PI / 180;
+const clampDeg = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
 
 // The globe is a hollow wireframe shell: no ocean, no solid body, just outlines
 // and the graticule, with the far side showing faintly through. Everything is a
@@ -34,44 +35,35 @@ const GLOBE_COLORS = {
   rim:          W_(0.34),
 };
 
-function createGlobe(canvas, opts = {}) {
-  const ctx = canvas.getContext("2d");
-  const onSelect = opts.onSelect || (() => {});
-  const onHover = opts.onHover || (() => {});
-  const onGesture = opts.onGesture || (() => {});
+// Countries whose largest ring is narrower than this get a marker dot as well
+// as (or instead of) a polygon — otherwise they are a sub-pixel smudge.
+const DOT_SPAN = 3.2;
+// Once zoomed in, a country with real geometry is a big enough target on its
+// own, so its dot gets out of the way. The micro-states have no polygon at all
+// and keep theirs at every zoom level.
+const DOT_ZOOM_CUTOFF = 2.6;
 
-  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+// ---------- Geometry prep ----------
+// Rings arrive as flat [lon,lat,...] degrees. Unit vectors are precomputed once
+// so each frame only has to apply two rotations per point.
+const toXYZ = (flat) => {
+  const v = new Float32Array((flat.length / 2) * 3);
+  for (let i = 0, o = 0; i < flat.length; i += 2, o += 3) {
+    const lon = flat[i] * DEG, lat = flat[i + 1] * DEG;
+    const cl = Math.cos(lat);
+    v[o] = cl * Math.cos(lon);
+    v[o + 1] = cl * Math.sin(lon);
+    v[o + 2] = Math.sin(lat);
+  }
+  return v;
+};
 
-  // Ids whose only panoramas are user photospheres, read straight off data.js so
-  // the globe doesn't need its own copy of the coverage state.
-  const photoOnly = new Set(
-    (typeof COUNTRIES === "undefined" ? [] : COUNTRIES)
-      .filter(c => c.coverage === "photospheres")
-      .map(c => c.id)
-  );
-
-  // ---------- Geometry prep ----------
-  // Rings arrive as flat [lon,lat,...] degrees. Unit vectors are precomputed once
-  // so each frame only has to apply two rotations per point.
-  const toXYZ = (flat) => {
-    const v = new Float32Array((flat.length / 2) * 3);
-    for (let i = 0, o = 0; i < flat.length; i += 2, o += 3) {
-      const lon = flat[i] * DEG, lat = flat[i + 1] * DEG;
-      const cl = Math.cos(lat);
-      v[o] = cl * Math.cos(lon);
-      v[o + 1] = cl * Math.sin(lon);
-      v[o + 2] = Math.sin(lat);
-    }
-    return v;
-  };
-
-  // Countries whose largest ring is narrower than this get a marker dot as well
-  // as (or instead of) a polygon — otherwise they are a sub-pixel smudge.
-  const DOT_SPAN = 3.2;
-  // Once zoomed in, a country with real geometry is a big enough target on its
-  // own, so its dot gets out of the way. The micro-states have no polygon at all
-  // and keep theirs at every zoom level.
-  const DOT_ZOOM_CUTOFF = 2.6;
+// The whole world, unpacked once and memoised. The interactive globe and the
+// compare view's snapshots share the same prepared arrays, so opening Compare
+// costs no geometry work at all.
+let _geometry = null;
+function globeGeometry() {
+  if (_geometry) return _geometry;
 
   const shapes = WORLD_LAND.map(c => ({
     name: c.n,
@@ -105,6 +97,31 @@ function createGlobe(canvas, opts = {}) {
     for (let lon = -180; lon <= 180; lon += 3) flat.push(lon, lat);
     graticule.push(toXYZ(flat));
   }
+
+  _geometry = { shapes, all, byCountryId, markers, graticule };
+  return _geometry;
+}
+
+
+function createGlobe(canvas, opts = {}) {
+  const ctx = canvas.getContext("2d");
+  const onSelect = opts.onSelect || (() => {});
+  const onHover = opts.onHover || (() => {});
+  const onGesture = opts.onGesture || (() => {});
+
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // Ids whose only panoramas are user photospheres, read straight off data.js so
+  // the globe doesn't need its own copy of the coverage state.
+  const photoOnly = new Set(
+    (typeof COUNTRIES === "undefined" ? [] : COUNTRIES)
+      .filter(c => c.coverage === "photospheres")
+      .map(c => c.id)
+  );
+
+  // Geometry is prepared once for the whole page and shared with the compare
+  // view's snapshots — see globeGeometry() above.
+  const { shapes, byCountryId, markers, graticule } = globeGeometry();
 
   // ---------- View state ----------
   const view = { lambda: -12, phi: 26, zoom: 1 };
@@ -664,4 +681,233 @@ function createGlobe(canvas, opts = {}) {
     },
     has: (id) => byCountryId.has(id),
   };
+}
+
+// A ring whose bounding box wraps the antimeridian has a meaningless midpoint
+// longitude: Russia and Fiji are both stored at 0°E, one in the North Sea and
+// one off west Africa. Their longitude is recovered as the mean direction of
+// every vertex, which the wrap cannot confuse. Latitude never wraps, so the
+// stored value stands — and it is the better answer anyway, since the Arctic
+// coast carries more vertices than the southern border and would drag a mean
+// latitude for Russia up past 71°N.
+// The stored span goes the same way — 360° for both, which would tell the
+// snapshot that Fiji is the size of a hemisphere. It is replaced by the widest
+// angle any vertex makes with the recovered centre, doubled.
+function displayShape(shape) {
+  if (shape.display) return shape.display;
+
+  let centre = shape.centre, span = shape.span;
+  if (span >= 180) {
+    let x = 0, y = 0;
+    for (const xyz of shape.xyz) {
+      for (let o = 0; o < xyz.length; o += 3) { x += xyz[o]; y += xyz[o + 1]; }
+    }
+    if (x || y) centre = [Math.atan2(y, x) / DEG, shape.centre[1]];
+
+    const la = centre[1] * DEG, lo = centre[0] * DEG, cla = Math.cos(la);
+    const ax = cla * Math.cos(lo), ay = cla * Math.sin(lo), az = Math.sin(la);
+    let worst = 1;
+    for (const xyz of shape.xyz) {
+      for (let o = 0; o < xyz.length; o += 3) {
+        const dot = xyz[o] * ax + xyz[o + 1] * ay + xyz[o + 2] * az;
+        if (dot < worst) worst = dot;
+      }
+    }
+    span = 2 * Math.acos(clampDeg(worst, -1, 1)) / DEG;
+  }
+
+  shape.display = { centre, span };
+  return shape.display;
+}
+
+// Where a country sits, for anything that wants to say it in words rather than
+// draw it. Returns [lon, lat], or null for an id the geometry has never heard of.
+const globeCentre = (id) => {
+  const s = globeGeometry().byCountryId.get(id);
+  return s ? displayShape(s).centre : null;
+};
+
+// ---------- Static snapshots ----------
+// The compare view wants to say "here, and here" without putting a second
+// draggable globe on the page: one frozen frame per country, drawn straight
+// onto a small canvas. Same projection and the same prepared geometry as the
+// interactive globe, with everything that moves left out — no inertia, no
+// hover, no far face, no hit-testing, no animation loop. There is no instance
+// to hold on to: call it again to redraw.
+//
+// Two things differ from the big globe on purpose. The country is turned to
+// face the viewer, so it is always dead centre on the near face rather than
+// squashed against the limb. And land is filled rather than wireframed — at
+// 130px a hollow outline is mush, and the whole job of the picture is to make
+// one shape jump out of a continent.
+
+const SNAP_LAND = W_(0.13);
+const SNAP_GRATICULE = W_(0.07);
+
+// Anything narrower than this gets a locator ring as well as the highlight.
+// Half the dataset is a country you could cover with a fingernail at this size,
+// and Monaco is quite literally a single pixel of accent colour.
+const SNAP_RING_SPAN = 14;
+
+function drawGlobeSnapshot(canvas, countryId, opts = {}) {
+  const rect = canvas.getBoundingClientRect();
+  // Compare renders while its view is still hidden, so the canvas has no size
+  // yet. The caller redraws from a ResizeObserver once it does.
+  if (!rect.width || !rect.height) return false;
+
+  const geo = globeGeometry();
+  const target = countryId ? geo.byCountryId.get(countryId) : null;
+  const accent = opts.accent || "#ffffff";
+
+  const ctx = canvas.getContext("2d");
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const W = rect.width, H = rect.height;
+  canvas.width = Math.round(W * dpr);
+  canvas.height = Math.round(H * dpr);
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, W, H);
+
+  const cx = W / 2, cy = H / 2;
+  const R = Math.min(W, H) / 2 - 5;   // the glow needs a little room outside the rim
+  if (R <= 4) return false;
+
+  // Orientation, in the same two angles the interactive globe uses. The tilt is
+  // held off the poles so the graticule never collapses to a point behind an
+  // Arctic country and takes the sense of a sphere with it.
+  const shown = target ? displayShape(target) : null;
+  const lon = shown ? shown.centre[0] : 12;
+  const lat = shown ? clampDeg(shown.centre[1], -74, 74) : 22;
+  const cl = Math.cos(-lon * DEG), sl = Math.sin(-lon * DEG);
+  const cf = Math.cos(lat * DEG), sf = Math.sin(lat * DEG);
+
+  let px = 0, py = 0;
+  const project = (x, y, z) => {
+    const x1 = x * cl - y * sl;
+    const y1 = x * sl + y * cl;
+    const x2 = x1 * cf + z * sf;
+    const z2 = -x1 * sf + z * cf;
+    px = cx + R * y1;
+    py = cy - R * z2;
+    return x2;
+  };
+
+  // Near face only. A ring with nothing on this face is skipped rather than
+  // clamped to the limb — there is no far side to keep sealed here.
+  const nearRing = (xyz) => {
+    let any = false;
+    ctx.beginPath();
+    for (let o = 0; o < xyz.length; o += 3) {
+      const depth = project(xyz[o], xyz[o + 1], xyz[o + 2]);
+      let x = px, y = py;
+      if (depth <= 0) {
+        const dx = px - cx, dy = py - cy;
+        const len = Math.hypot(dx, dy) || 1;
+        x = cx + (dx / len) * R;
+        y = cy + (dy / len) * R;
+      } else any = true;
+      if (o === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    }
+    ctx.closePath();
+    return any;
+  };
+
+  // Halo outside the shell, wash inside it — the same two gradients as the big
+  // globe, so the pair read as the same object.
+  const halo = ctx.createRadialGradient(cx, cy, R * 0.9, cx, cy, R * 1.16);
+  halo.addColorStop(0, "rgba(255,255,255,0.12)");
+  halo.addColorStop(0.42, "rgba(255,255,255,0.04)");
+  halo.addColorStop(1, "rgba(255,255,255,0)");
+  ctx.fillStyle = halo;
+  ctx.beginPath();
+  ctx.arc(cx, cy, R * 1.16, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.fillStyle = "rgba(10,11,13,0.5)";
+  ctx.beginPath();
+  ctx.arc(cx, cy, R, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(cx, cy, R, 0, Math.PI * 2);
+  ctx.clip();
+  ctx.lineJoin = "round";
+
+  ctx.lineWidth = 0.7;
+  ctx.strokeStyle = SNAP_GRATICULE;
+  ctx.beginPath();
+  for (const g of geo.graticule) {
+    let started = false;
+    for (let o = 0; o < g.length; o += 3) {
+      if (project(g[o], g[o + 1], g[o + 2]) <= 0) { started = false; continue; }
+      if (started) ctx.lineTo(px, py); else { ctx.moveTo(px, py); started = true; }
+    }
+  }
+  ctx.stroke();
+
+  // Land, filled flat. Stroking each ring in its own fill colour thickens it by
+  // half a pixel, which is the difference between an island chain showing up
+  // and disappearing entirely.
+  ctx.fillStyle = SNAP_LAND;
+  ctx.strokeStyle = SNAP_LAND;
+  ctx.lineWidth = 0.6;
+  for (const shape of geo.shapes) {
+    if (shape === target) continue;
+    for (const xyz of shape.xyz) {
+      if (!nearRing(xyz)) continue;
+      ctx.fill();
+      ctx.stroke();
+    }
+  }
+
+  if (target) {
+    ctx.shadowColor = accent;
+    ctx.shadowBlur = 12;
+    ctx.fillStyle = accent;
+    ctx.strokeStyle = accent;
+    ctx.lineWidth = 1.2;
+    let drew = false;
+    for (const xyz of target.xyz) {
+      if (!nearRing(xyz)) continue;
+      ctx.globalAlpha = 0.92;
+      ctx.fill();
+      ctx.globalAlpha = 1;
+      ctx.stroke();
+      drew = true;
+    }
+    // Micro-states have no polygon at all, and a country a couple of degrees
+    // across paints fewer pixels than the ring around it. Both get a dot.
+    if (!drew || shown.span < 2.5) {
+      ctx.beginPath();
+      ctx.arc(cx, cy, 3.2, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.shadowBlur = 0;
+
+    if (shown.span < SNAP_RING_SPAN) {
+      const own = R * Math.sin((shown.span / 2) * DEG);
+      const rr = Math.min(R * 0.55, Math.max(9, own + 6));
+      ctx.strokeStyle = accent;
+      ctx.globalAlpha = 0.7;
+      ctx.lineWidth = 1.1;
+      ctx.beginPath();
+      ctx.arc(cx, cy, rr, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.globalAlpha = 0.22;
+      ctx.beginPath();
+      ctx.arc(cx, cy, rr + 4, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+    }
+  }
+
+  ctx.restore();
+
+  ctx.beginPath();
+  ctx.arc(cx, cy, R, 0, Math.PI * 2);
+  ctx.lineWidth = 1;
+  ctx.strokeStyle = W_(0.3);
+  ctx.stroke();
+
+  return true;
 }

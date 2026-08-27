@@ -394,11 +394,81 @@ function renderDetailPanel() {
 
 // ---------- Rendering: Compare ----------
 
-function populateSelect(selectEl, selectedId) {
-  selectEl.innerHTML = `<option value="">Choose a country&hellip;</option>` +
-    COUNTRIES.slice().sort((a,b) => a.name.localeCompare(b.name)).map(c =>
-      `<option value="${c.id}" ${c.id === selectedId ? "selected" : ""}>${c.name}</option>`
-    ).join("");
+// The two searchable pickers, built once at load by picker.js and then only ever
+// told what to show. They are the only way into state.compareLeft/Right from the
+// compare view itself; the confusedWith chips in Browse still set it directly.
+let comparePickers = null;
+
+function initComparePickers() {
+  const build = (mountId, side) => createCountryPicker(document.getElementById(mountId), {
+    label: side === "left" ? "Left country" : "Right country",
+    onChange(id) {
+      state[side === "left" ? "compareLeft" : "compareRight"] = id;
+      renderCompare();
+    },
+    // Comparing a country with itself is a page of grey rows, so each picker
+    // greys out whatever the other one is holding.
+    unavailable: () => side === "left" ? state.compareRight : state.compareLeft,
+  });
+  comparePickers = { left: build("pickerLeft", "left"), right: build("pickerRight", "right") };
+}
+
+// ---------- The compare view's globe snapshots ----------
+
+// Compare renders while the view is still display:none, so the canvases have no
+// size on the first pass and draw nothing. One observer, rebuilt on every
+// render, catches them the moment they get one — and catches the window being
+// resized after that.
+let snapshotWatcher = null;
+
+const drawSnapshot = (canvas) =>
+  drawGlobeSnapshot(canvas, canvas.dataset.country, { accent: canvas.dataset.accent });
+
+function mountSnapshots(root) {
+  if (snapshotWatcher) snapshotWatcher.disconnect();
+  const canvases = root.querySelectorAll("canvas.mini-globe");
+  if (!canvases.length) return;
+  if (window.ResizeObserver) {
+    snapshotWatcher = new ResizeObserver(entries => entries.forEach(e => drawSnapshot(e.target)));
+    canvases.forEach(c => snapshotWatcher.observe(c));
+  } else {
+    canvases.forEach(drawSnapshot);
+  }
+}
+
+// Canvas has never heard of var(--sign-blue), so the side colours are resolved
+// out of the stylesheet once and passed to the snapshot as real hex.
+const _cssCache = {};
+function cssVar(name) {
+  if (!(name in _cssCache)) {
+    _cssCache[name] = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  }
+  return _cssCache[name];
+}
+
+// Degrees with a hemisphere letter, the way an atlas says it — "51°N 11°E".
+// A rounded zero drops the letter: Kenya sits on the equator and "0°N" is not a
+// thing anyone writes.
+function latLonLabel(centre) {
+  if (!centre) return "";
+  const axis = (v, neg, pos) => {
+    const d = Math.abs(Math.round(v));
+    return `${d}&deg;${d === 0 ? "" : (v < 0 ? neg : pos)}`;
+  };
+  return `${axis(centre[1], "S", "N")} ${axis(centre[0], "W", "E")}`;
+}
+
+// The accent is the colour of the picker's own edge above it, so each globe is
+// tied to the side it belongs to without a label having to say which is which.
+function globeCell(c, accentVar) {
+  const centre = globeCentre(c.id);
+  return `
+    <div class="mini-globe-wrap">
+      <canvas class="mini-globe" data-country="${escapeHtml(c.id)}" data-accent="${cssVar(accentVar)}"
+              role="img" aria-label="${escapeHtml(c.name)} highlighted on a globe"></canvas>
+    </div>
+    <div class="field-value">${escapeHtml(c.region)}</div>
+    ${centre ? `<div class="field-note mono">${latLonLabel(centre)}</div>` : ""}`;
 }
 
 function fieldRow(label, leftVal, rightVal, leftNote, rightNote, isDiff) {
@@ -418,8 +488,8 @@ function fieldRow(label, leftVal, rightVal, leftNote, rightNote, isDiff) {
 }
 
 function renderCompare() {
-  populateSelect(document.getElementById("selectLeft"), state.compareLeft);
-  populateSelect(document.getElementById("selectRight"), state.compareRight);
+  comparePickers.left.setValue(state.compareLeft);
+  comparePickers.right.setValue(state.compareRight);
 
   const out = document.getElementById("compareOutput");
   const a = byId(state.compareLeft);
@@ -427,6 +497,7 @@ function renderCompare() {
 
   if (!a || !b) {
     out.innerHTML = `<div class="compare-empty">Pick two countries above to see exactly what differs between them.</div>`;
+    mountSnapshots(out);
     return;
   }
 
@@ -492,6 +563,17 @@ function renderCompare() {
 
     ${fieldRow("Language / script", `<span class="mono">${a.language.script}</span>`, `<span class="mono">${b.language.script}</span>`, a.language.notes, b.language.notes, scriptDiff)}
 
+    <div class="diff-row is-info">
+      <div class="diff-cell">
+        <div class="field-label">Where</div>
+        ${globeCell(a, "--sign-blue")}
+      </div>
+      <div class="diff-cell">
+        <div class="field-label">Where</div>
+        ${globeCell(b, "--bollard-red")}
+      </div>
+    </div>
+
     <div class="key-tip-banner" style="margin-top:20px">
       <div class="label">${a.name}'s fastest tell</div>
       ${a.keyTip}
@@ -501,6 +583,8 @@ function renderCompare() {
       ${b.keyTip}
     </div>
   `;
+
+  mountSnapshots(out);
 }
 
 // ---------- View switching ----------
@@ -541,6 +625,7 @@ document.addEventListener("DOMContentLoaded", () => {
   renderListHead();
   renderGrid();
   initGuide();
+  initComparePickers();
 
   globe = createGlobe(document.getElementById("globeCanvas"), {
     onSelect: (id, name) => {
@@ -579,16 +664,4 @@ document.addEventListener("DOMContentLoaded", () => {
   document.querySelectorAll("nav.tabs button").forEach(btn => {
     btn.addEventListener("click", () => setView(btn.dataset.view));
   });
-
-  document.getElementById("selectLeft").addEventListener("change", (e) => {
-    state.compareLeft = e.target.value || null;
-    renderCompare();
-  });
-  document.getElementById("selectRight").addEventListener("change", (e) => {
-    state.compareRight = e.target.value || null;
-    renderCompare();
-  });
-
-  populateSelect(document.getElementById("selectLeft"), null);
-  populateSelect(document.getElementById("selectRight"), null);
 });

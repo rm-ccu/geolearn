@@ -707,23 +707,208 @@ nav.tabs button:not(.active):hover {
   margin-bottom: 30px;
 }
 
-.picker select {
+/* ---------- The country picker ---------- */
+/* Built by picker.js. Each side keeps its own accent — the blue and the red are
+   the same two colours the globes at the bottom of the comparison are drawn in,
+   so a column never needs a label saying which country it belongs to. */
+
+.picker { position: relative; }
+.country-picker { position: relative; }
+
+.picker-trigger {
   width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
   background: var(--surface);
   border: 1px solid var(--line);
   color: var(--chalk);
   border-radius: var(--radius);
-  padding: 14px 16px;
-  font-size: 18px;
+  padding: 12px 15px;
+  text-align: left;
+  transition: background 0.18s, border-color 0.18s;
+}
+
+.picker.left .picker-trigger { border-left: 3px solid var(--sign-blue); }
+.picker.right .picker-trigger { border-left: 3px solid var(--bollard-red); }
+
+.picker-trigger:hover { background: var(--surface-raised); }
+.picker-trigger:focus-visible { outline: 2px solid var(--lane-yellow); outline-offset: -1px; }
+
+.picker-face { display: flex; flex: none; }
+.picker-face:empty { display: none; }
+.picker-face .flag { height: 20px; width: auto; }
+
+.picker-name {
   font-family: 'Barlow Condensed', sans-serif;
   text-transform: uppercase;
   letter-spacing: 0.03em;
   font-weight: 600;
-  appearance: none;
+  font-size: 18px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.picker.left select { border-left: 3px solid var(--sign-blue); }
-.picker.right select { border-left: 3px solid var(--bollard-red); }
+.country-picker:not(.has-value) .picker-name { color: var(--chalk-dim); }
+
+.picker-caret {
+  width: 12px;
+  height: 8px;
+  flex: none;
+  margin-left: auto;
+  color: var(--chalk-dim);
+  transition: transform 0.18s;
+}
+
+.country-picker.is-open .picker-caret { transform: rotate(180deg); }
+
+.picker-pop {
+  position: absolute;
+  z-index: 40;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  background: var(--surface-raised);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 20px 44px rgba(0, 0, 0, 0.55);
+  animation: picker-drop 0.14s ease-out;
+}
+
+.picker-pop[hidden] { display: none; }
+
+@keyframes picker-drop {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.picker-search-row {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 11px 13px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+}
+
+/* The field is auto-focused on open and has no border of its own, so the ring
+   goes round the whole row. */
+.picker-pop:focus-within .picker-search-row { box-shadow: inset 0 0 0 2px var(--lane-yellow); }
+
+.picker-glass { width: 15px; height: 15px; flex: none; color: var(--chalk-dim); }
+
+.picker-search {
+  flex: 1;
+  min-width: 0;
+  background: none;
+  border: 0;
+  padding: 2px 0;
+  color: var(--chalk);
+  font-family: inherit;
+  font-size: 14.5px;
+}
+
+.picker-search:focus { outline: none; }
+.picker-search::placeholder { color: var(--chalk-dim); }
+
+.picker-list {
+  position: relative;      /* setActive() measures offsetTop against this */
+  list-style: none;
+  margin: 0;
+  padding: 0 6px 8px;
+  max-height: min(46vh, 340px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.picker-group {
+  position: sticky;
+  top: 0;
+  background: var(--surface-raised);
+  font-family: 'Barlow Condensed', sans-serif;
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--chalk-dim);
+  padding: 10px 10px 5px;
+}
+
+.picker-row {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14.5px;
+}
+
+/* Flags stay sized by height like everywhere else in the app; the cap only
+   catches Qatar, which is two and a half times as wide as it is tall. */
+.picker-row .flag {
+  justify-self: center;
+  height: 16px;
+  width: auto;
+  max-width: 32px;
+  object-fit: contain;
+}
+
+.picker.left .picker-row.is-active {
+  background: rgba(59, 110, 168, 0.18);
+  box-shadow: inset 3px 0 0 var(--sign-blue);
+}
+
+.picker.right .picker-row.is-active {
+  background: rgba(193, 68, 60, 0.18);
+  box-shadow: inset 3px 0 0 var(--bollard-red);
+}
+
+.picker-option[aria-selected="true"] .picker-option-name {
+  color: var(--lane-yellow);
+  font-weight: 600;
+}
+
+.picker-option-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* The matched run of the name, marked without a highlighter bar behind it. */
+.picker-option-name mark {
+  background: none;
+  color: var(--lane-yellow);
+  font-weight: 600;
+}
+
+.picker-option-tag {
+  font-family: 'Barlow Condensed', sans-serif;
+  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--chalk-dim);
+}
+
+.picker-option-tag .mono { font-size: 11.5px; letter-spacing: 0; text-transform: none; }
+
+.picker-row.is-taken { opacity: 0.4; cursor: default; }
+
+.picker-clear {
+  grid-template-columns: 1fr;
+  margin-top: 8px;
+  color: var(--chalk-dim);
+  font-size: 13px;
+}
+
+.picker-none {
+  padding: 22px 12px;
+  text-align: center;
+  color: var(--chalk-dim);
+  font-size: 14px;
+}
 
 .vs-mark {
   font-family: 'Barlow Condensed', sans-serif;
@@ -776,6 +961,21 @@ nav.tabs button:not(.active):hover {
 
 .diff-cell .field-value { font-size: 14px; line-height: 1.5; }
 .diff-cell .field-note { font-size: 12.5px; color: var(--chalk-dim); margin-top: 4px; line-height: 1.45; }
+
+/* The "Where" row: a frozen globe per country, drawn by drawGlobeSnapshot() in
+   globe.js, in the same accent as that side's picker. Informational rather than
+   a diff — two countries are never in the same place, so highlighting the row
+   yellow would say nothing. */
+.diff-row.is-info { box-shadow: none; }
+
+.mini-globe-wrap {
+  width: 100%;
+  max-width: 170px;
+  aspect-ratio: 1 / 1;
+  margin: 4px 0 10px;
+}
+
+.mini-globe { display: block; width: 100%; height: 100%; }
 
 .diff-legend {
   display: flex;

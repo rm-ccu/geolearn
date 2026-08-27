@@ -84,14 +84,13 @@
 
   <!-- COMPARE -->
   <section id="view-compare" class="view">
+    <!-- Mount points only: createCountryPicker() in picker.js builds each picker
+         in full, because a searchable listbox is more markup than it is worth
+         keeping in sync by hand across two sides. -->
     <div class="compare-pickers">
-      <div class="picker left">
-        <select id="selectLeft"></select>
-      </div>
+      <div class="picker left"><div id="pickerLeft"></div></div>
       <div class="vs-mark">VS</div>
-      <div class="picker right">
-        <select id="selectRight"></select>
-      </div>
+      <div class="picker right"><div id="pickerRight"></div></div>
     </div>
     <div id="compareOutput"></div>
   </section>
@@ -131,6 +130,7 @@
 <script src="flags.js"></script>
 <script src="globe.js"></script>
 <script src="shields.js"></script>
+<script src="picker.js"></script>
 <script src="guide.js"></script>
 <script src="app.js"></script>
 </body>
