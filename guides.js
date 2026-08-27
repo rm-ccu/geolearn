@@ -118,7 +118,7 @@ const COURSE = [
     goal: "Cut the world in half in the first second, even when the road is empty.",
     minutes: 5,
     body: [
-      { t: "p", text: "Nothing else you can see eliminates as much of the planet this fast. Of the 122 places a standard game can drop you, **33 drive on the left** — the British Isles, southern and eastern Africa, South Asia, most of South East Asia, Japan, Australasia, and a short list of islands. Everywhere else drives on the right." },
+      { t: "p", text: "Nothing else you can see eliminates as much of the planet this fast. Of the 121 places a standard game can drop you, **33 drive on the left** — the British Isles, southern and eastern Africa, South Asia, most of South East Asia, Japan, Australasia, and a short list of islands. Everywhere else drives on the right." },
       { t: "p", text: "That is not a fifty-fifty split, and the asymmetry is useful in itself: left-hand traffic is the rarer, more informative answer. Seeing it immediately puts you in one of a handful of clusters, and those clusters barely overlap in language or climate." },
 
       { t: "steps", label: "Reading the side when no car is moving", items: [
@@ -190,7 +190,7 @@ const COURSE = [
         "**Thai, Lao, Khmer, Burmese** — curling South East Asian scripts, one country each. Lao looks like a rounder, simpler Thai.",
         "**Devanagari** — [[india]] or [[nepal]]. Red plates mean Nepal.",
         "**Sinhala's** round bubbles — [[sri lanka]]. **Bengali** — [[bangladesh]]. **Tibetan** — [[bhutan]].",
-        "**Georgian**, **Armenian**, **Hebrew**, **Greek**, **Amharic** — each essentially one country.",
+        "**Georgian**, **Armenian**, **Greek**, **Amharic** — each essentially one country.",
         "**Arabic** — a large family, so fall through to plates, terrain and which Gulf state you are in."
       ]},
 
@@ -291,7 +291,7 @@ const COURSE = [
         caption: "Colour does most of the work. White is the default across Europe and much of the world; everything else is a short list." },
 
       { t: "steps", label: "The colour shortlist", items: [
-        "**Yellow** — [[netherlands]], [[luxembourg]], [[cyprus]], [[israel]], [[namibia]], [[colombia]], and the **rear** plates of [[uk]], [[ireland]] and [[botswana]].",
+        "**Yellow** — [[netherlands]], [[luxembourg]], [[cyprus]], [[namibia]], [[colombia]], and the **rear** plates of [[uk]], [[ireland]] and [[botswana]].",
         "**Black with white text** — [[malaysia]], [[singapore]], older [[indonesia]], [[macau]], [[liechtenstein]], [[tunisia]].",
         "**Red** — [[nepal]] private vehicles, and the older red-lettering format still common in [[brazil]].",
         "**Orange** — [[laos]], a combination none of its neighbours use.",
@@ -492,7 +492,7 @@ const COURSE = [
 
       { t: "p", text: "Two more worth memorising. [[malaysia]] and [[indonesia]] share left-hand traffic, black plates and oil palms — check the sign colour and look for the words Kabupaten or Desa, which are Indonesian only. The [[dominican republic]] and [[puerto rico]] are both Spanish-speaking Caribbean; Puerto Rico has American traffic hardware and route shields, and the Dominican Republic does not." },
 
-      { t: "callout", tone: "tip", label: "The coverage tiebreaker", text: "When you genuinely cannot split two candidates, take the one the game is more likely to drop you in. Of the 218 entries on this site, **96 have no official Street View coverage at all** — a standard game cannot put you there. Torn between Kenya and Tanzania on an official map? Tanzania is photospheres-only. Take Kenya." },
+      { t: "callout", tone: "tip", label: "The coverage tiebreaker", text: "When you genuinely cannot split two candidates, take the one the game is more likely to drop you in. Of the 217 entries on this site, **96 have no official Street View coverage at all** — a standard game cannot put you there. Torn between Kenya and Tanzania on an official map? Tanzania is photospheres-only. Take Kenya." },
 
       { t: "callout", tone: "warn", label: "Do not chase certainty", text: "Some rounds will not resolve, and hunting for one more sign costs more points than a confident 90% guess. Run the scan, take the best-supported country, move on. Country accuracy comes from doing the scan every round, not from winning the hard ones." },
 
@@ -597,7 +597,7 @@ const GUIDE_MAPS = [
     body: [
       { t: "p", text: "The official World map draws from everything Google has driven, which means its shape is not a design decision — it is a **map of where the Street View car has been**. That single fact explains almost everything about how it plays." },
 
-      { t: "p", text: "Of the 218 entries in this guide, **122 can appear here and 96 cannot**, because the other 96 have no official coverage at all. Egypt, China, Pakistan, Cuba, Tanzania and every small Pacific and Caribbean state are simply not in the deck. That is the most useful thing you can know about this map, and it is worth internalising before any clue work: a country you cannot be dropped in is never the answer." },
+      { t: "p", text: "Of the 217 entries in this guide, **121 can appear here and 96 cannot**, because the other 96 have no official coverage at all. Egypt, China, Pakistan, Cuba, Tanzania and every small Pacific and Caribbean state are simply not in the deck. That is the most useful thing you can know about this map, and it is worth internalising before any clue work: a country you cannot be dropped in is never the answer." },
 
       { t: "callout", tone: "tip", label: "Use the coverage filter in your head", text: "Torn between two candidates? Check whether one of them is photospheres-only. On this map that ends the argument immediately. The globe in Browse shades the two coverage types differently for exactly this reason." },
 
@@ -624,7 +624,7 @@ const GUIDE_MAPS = [
 
       { t: "callout", tone: "tip", label: "What curation changes for you", text: "More drops have something to read. That moves the value from the clues that survive emptiness — car, paint, poles — toward **script, signage and shopfronts**. If you find the course's language chapter harder than the bollard chapter, this is the map that punishes it." },
 
-      { t: "p", text: "It is still built from official coverage, so the 96 photospheres-only entries remain out of the deck. What changes is the weighting inside the 122 that are in: countries that feel rare on the official map turn up at a rate you will notice, so the tail is worth more study here than it is there." },
+      { t: "p", text: "It is still built from official coverage, so the 96 photospheres-only entries remain out of the deck. What changes is the weighting inside the 121 that are in: countries that feel rare on the official map turn up at a rate you will notice, so the tail is worth more study here than it is there." },
 
       { t: "steps", label: "Playing it in duels", items: [
         "**Commit early.** Duels reward a fast confident country far more than a slow precise pin.",

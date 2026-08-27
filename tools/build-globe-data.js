@@ -87,6 +87,11 @@ const DOTS = {
   micronesia: [158.21, 6.92],
 };
 
+// Natural Earth outlines to drop on the floor. The atlas ships every polygon it
+// has, so an entry removed from data.js would otherwise come back as an unnamed
+// landmass the next time this script runs. Names here are the atlas spellings.
+const OMIT = new Set(["Israel"]);
+
 function decodeArcs(topo) {
   const { scale: [sx, sy], translate: [tx, ty] } = topo.transform;
   return topo.arcs.map(arc => {
@@ -166,6 +171,7 @@ function build(topo, COUNTRIES) {
 
   const out = [];
   for (const geom of topo.objects.countries.geometries) {
+    if (OMIT.has(geom.properties.name)) continue;
     const polys = geom.type === 'Polygon' ? [geom.arcs] : geom.arcs;
     let rings = polys.map(poly => ringToPoints(poly[0])); // outer ring only
     rings.sort((a, b) => area(b) - area(a));

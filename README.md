@@ -10,7 +10,7 @@ colours, script and language, plus the countries it's most often mixed up with �
 you look them up or compare them side by side. **Every country in the world is in the
 dataset** — all 193 UN members plus Vatican City, Kosovo, Taiwan and Palestine, and the
 territories that play as their own place in GeoGuessr (Hong Kong, Macau, Puerto Rico, the
-Faroes, Réunion, Guam and the rest). 218 entries in total, each marked with whether Google
+Faroes, Réunion, Guam and the rest). 217 entries in total, each marked with whether Google
 actually drove it or whether the only panoramas are user photospheres.
 
 It's a **static site with no build step and no framework**: plain HTML, CSS, and
@@ -33,7 +33,7 @@ geolearn/
 ├── globe.js        # The globe itself: projection, drawing, hit-testing, gestures
 ├── flights.js      # The ambient flight-tracker background (see "The background")
 ├── flags.js        # Flag <img> renderer + the per-flag aspect ratios
-├── flags/          # The 217 real flag images (PNG, public domain)
+├── flags/          # The 216 real flag images (PNG, public domain)
 ├── shields.js      # Route-marker renderer — the US analogue of bollardSVG()
 ├── picker.js       # The searchable country combobox the compare view runs on
 ├── guide.js        # Renders the guidebook from its typed blocks
@@ -72,7 +72,7 @@ page:
   empty outlines that say "not in the guide yet" on hover. Brightness carries the rest of
   the state — the others in the selected country's region are filled brighter (the visual
   echo of the filtered list), and the selected country itself is solid white with a glow.
-- Typing in the search box overrides the region scope, so a search always covers all 218
+- Typing in the search box overrides the region scope, so a search always covers all 217
   entries rather than silently searching inside one continent.
 - Each card carries the country's **flag and ccTLD** next to the bollard — `.ch`, `.ru`,
   `.at`. The domain suffix is a real clue in its own right: it turns up on vans, shopfronts
@@ -257,7 +257,7 @@ drives on the left with American plates, Macau pairs Portuguese with Chinese.
 What differs between entries is **how you can actually be dropped there**, which is what
 the `coverage` field records:
 
-- **`official`** — a Street View car or trekker has driven it. 122 entries, taken from the
+- **`official`** — a Street View car or trekker has driven it. 121 entries, taken from the
   rows marked as public in Wikipedia's [Google Street View
   coverage](https://en.wikipedia.org/wiki/Google_Street_View_coverage) table (August 2026).
   This is the set a standard GeoGuessr game draws from.
@@ -286,8 +286,8 @@ Oceania.
 
 `flags/` holds the real flag of every country in the dataset — public domain artwork from
 [flagcdn.com](https://flagcdn.com), rasterised to 160px wide and checked in, so the page
-still makes no third-party requests and still works from `file://`. All 217 together are
-about 870 KB. (217, not 218: the Akrotiri and Dhekelia entry flies the Union Flag, so it
+still makes no third-party requests and still works from `file://`. All 216 together are
+about 870 KB. (216, not 217: the Akrotiri and Dhekelia entry flies the Union Flag, so it
 reuses the UK's file.)
 
 This is the third version. Emoji came first and were dropped: Windows ships no flag glyphs
