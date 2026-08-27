@@ -190,7 +190,7 @@ const COURSE = [
         "**Thai, Lao, Khmer, Burmese** — curling South East Asian scripts, one country each. Lao looks like a rounder, simpler Thai.",
         "**Devanagari** — [[india]] or [[nepal]]. Red plates mean Nepal.",
         "**Sinhala's** round bubbles — [[sri lanka]]. **Bengali** — [[bangladesh]]. **Tibetan** — [[bhutan]].",
-        "**Georgian**, **Armenian**, **Greek**, **Amharic** — each essentially one country.",
+        "**Georgian**, **Armenian**, **Hebrew**, **Greek**, **Amharic** — each essentially one country.",
         "**Arabic** — a large family, so fall through to plates, terrain and which Gulf state you are in."
       ]},
 
@@ -291,7 +291,7 @@ const COURSE = [
         caption: "Colour does most of the work. White is the default across Europe and much of the world; everything else is a short list." },
 
       { t: "steps", label: "The colour shortlist", items: [
-        "**Yellow** — [[netherlands]], [[luxembourg]], [[cyprus]], [[namibia]], [[colombia]], and the **rear** plates of [[uk]], [[ireland]] and [[botswana]].",
+        "**Yellow** — [[netherlands]], [[luxembourg]], [[cyprus]], [[palestine]], [[namibia]], [[colombia]], and the **rear** plates of [[uk]], [[ireland]] and [[botswana]].",
         "**Black with white text** — [[malaysia]], [[singapore]], older [[indonesia]], [[macau]], [[liechtenstein]], [[tunisia]].",
         "**Red** — [[nepal]] private vehicles, and the older red-lettering format still common in [[brazil]].",
         "**Orange** — [[laos]], a combination none of its neighbours use.",

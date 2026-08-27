@@ -216,7 +216,7 @@ const COUNTRIES = [
     plates: { bg: "#ffffff", band: "#3b6ea8", notes: "White plate, blue EU strip with 'GR', black text." },
     language: { script: "Greek", notes: "Greek alphabet (α, β, γ...) is unmistakable and essentially confirms the country on sight." },
     keyTip: "Greek-alphabet signage is a same-glance confirm — no other country in Europe uses this script.",
-    confusedWith: ["cyprus", "turkey", "tunisia"]
+    confusedWith: ["cyprus", "turkey", "palestine", "tunisia"]
   },
   {
     id: "turkey", name: "Turkey", code: "TR", region: "Eurasia", driving: "right", coverage: "official",
@@ -414,7 +414,7 @@ const COUNTRIES = [
     plates: { bg: "#fadb2c", band: "#3b6ea8", notes: "Yellow rear plate, white front, blue EU strip with 'CY' — the yellow is a British inheritance." },
     language: { script: "Greek", notes: "Greek alongside English on nearly all official signage." },
     keyTip: "Greek script combined with driving on the left is conclusive — Greece drives on the right, so it can only be Cyprus.",
-    confusedWith: ["greece", "uk", "malta", "akrotiri and dhekelia"]
+    confusedWith: ["greece", "uk", "malta", "palestine", "akrotiri and dhekelia"]
   },
   {
     id: "kazakhstan", name: "Kazakhstan", code: "KZ", region: "Eurasia", driving: "right", coverage: "official",
@@ -688,12 +688,12 @@ const COUNTRIES = [
   },
   {
     id: "palestine", name: "Palestine", code: "PS", region: "Asia", driving: "right", coverage: "official",
-    bollard: { body: "#f5f5f0", cap: null, band: "#c1443c", shape: "sparse", notes: "West Bank coverage only. Narrow, rough roads through dry limestone hills, often with unfinished stone-block buildings alongside." },
-    signs: { bg: "#1b8a3b", accent: "#ffffff", notes: "Arabic-first signage with English transliteration on the main routes, and green Palestinian Authority boards in the towns." },
-    plates: { bg: "#ffffff", band: "#1b8a3b", notes: "White plate with green digits and a green strip down the left edge." },
-    language: { script: "Arabic", notes: "Arabic, with English transliteration on main routes." },
-    keyTip: "Dry limestone hills with white-and-green plates and Arabic-only signage: you are in the West Bank.",
-    confusedWith: ["jordan", "lebanon"]
+    bollard: { body: "#f5f5f0", cap: null, band: "#c1443c", shape: "flat", notes: "White posts with red reflectors along the main highways; terraced limestone, stone walling and dry pine-and-scrub hillsides do most of the work. West Bank roads are narrower and rougher, often with unfinished stone-block buildings alongside." },
+    signs: { bg: "#1b8a3b", accent: "#ffffff", notes: "Green intercity boards and blue urban ones, most of them trilingual; green Palestinian Authority boards in the West Bank towns, usually Arabic-first." },
+    plates: { bg: "#ffffff", band: "#1b8a3b", notes: "Two systems share the territory. White plates with green digits and a green strip are the Palestinian Authority's; reflective yellow plates with black digits are the more common of the two on the main roads and carry a long way." },
+    language: { script: "Arabic", notes: "Arabic throughout, with English transliteration on main routes. Hebrew — square, blocky letters with no ascenders — shares most highway boards, so signage is frequently trilingual." },
+    keyTip: "Trilingual boards over dry limestone and pine scrub, with yellow plates on the highways. White-and-green plates and Arabic-only signage put you in the West Bank.",
+    confusedWith: ["jordan", "lebanon", "cyprus", "greece", "egypt"]
   },
   {
     id: "jordan", name: "Jordan", code: "JO", region: "Asia", driving: "right", coverage: "official",
@@ -1107,7 +1107,7 @@ const COUNTRIES = [
     plates: { bg: "#ffffff", band: "#3b6ea8", notes: "White plate carrying both Arabic and Latin characters, with a blue strip; older all-Arabic issues still circulate." },
     language: { script: "Arabic", notes: "Egyptian Arabic, with English transliteration on tourist and main-road signage." },
     keyTip: "A hard line between irrigated green and bare desert, with Arabic signage and red-brick unfinished upper floors, is Egypt.",
-    confusedWith: ["sudan", "libya", "jordan"]
+    confusedWith: ["sudan", "libya", "jordan", "palestine"]
   },
   {
     id: "morocco", name: "Morocco", code: "MA", region: "Africa", driving: "right", coverage: "photospheres",

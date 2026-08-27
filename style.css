@@ -1745,6 +1745,30 @@ nav.tabs button:not(.active):hover {
 .test-revisit:hover { border-color: var(--lane-yellow); color: var(--lane-yellow); }
 .test-missed .test-revisit { margin-top: 0; }
 
+/* The site's editorial note. Set narrow and quiet — it is a statement, not a
+   banner, and it should not compete with the country panel above it. */
+.site-note {
+  max-width: 66ch;
+  margin: 44px auto 8px;
+  padding: 24px 26px 26px;
+  border: 1px solid var(--line);
+  border-left: 2px solid var(--bollard-red);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--chalk-dim);
+  font-size: 13.5px;
+  line-height: 1.7;
+}
+
+.site-note h2 {
+  font-size: 17px;
+  color: var(--chalk);
+  margin-bottom: 12px;
+}
+
+.site-note p { margin: 0 0 12px; }
+.site-note p:last-child { margin-bottom: 0; }
+
 @media (min-width: 901px) {
   .detail-col { position: sticky; top: 20px; }
   .guide-rail { position: sticky; top: 20px; max-height: calc(100vh - 40px); overflow-y: auto; }
@@ -1801,6 +1825,7 @@ nav.tabs button:not(.active):hover {
   .vs-mark { justify-self: center; }
   .diff-row { grid-template-columns: 1fr; }
   .guide-article { padding: 20px 18px 24px; }
+  .site-note { padding: 20px 18px 22px; }
   .guide-header h2 { font-size: 25px; }
   .guide-foot { flex-direction: column; }
   .guide-nav-btn { max-width: none; }

@@ -87,10 +87,38 @@ const DOTS = {
   micronesia: [158.21, 6.92],
 };
 
-// Natural Earth outlines to drop on the floor. The atlas ships every polygon it
-// has, so an entry removed from data.js would otherwise come back as an unnamed
-// landmass the next time this script runs. Names here are the atlas spellings.
-const OMIT = new Set(["Israel"]);
+// Atlas outlines to fold into another entry. The atlas splits this territory in
+// two; GeoLearn maps it as one country (see the note at the foot of the site),
+// so the two rings are spliced into a single outline here rather than by hand in
+// globe-data.js, which is generated. Keys and values are atlas spellings.
+const MERGE = { "Israel": "Palestine" };
+
+// Union of two rings that share a stretch of boundary — enough for merging
+// neighbours, and not a general polygon union. The shared vertices bracket the
+// internal border in the larger ring; the smaller ring supplies the way round
+// the outside of it, and the border itself is dropped.
+function spliceRings(big, small) {
+  const key = (p) => p[0] + "," + p[1];
+  const smallKeys = new Set(small.map(key));
+  const shared = big.map((p, i) => [p, i]).filter(([p]) => smallKeys.has(key(p)));
+  if (shared.length < 2) return null;
+
+  const i = shared[0][1], j = shared[shared.length - 1][1];
+  const walk = (ring, from, to, step) => {
+    const n = ring.length, out = [];
+    let k = ring.findIndex(p => key(p) === key(from));
+    const end = ring.findIndex(p => key(p) === key(to));
+    while (k !== end) { k = (k + step + n) % n; if (k !== end) out.push(ring[k]); }
+    return out;
+  };
+  const fwd = walk(small, big[i], big[j], 1);
+  const bwd = walk(small, big[i], big[j], -1);
+  const outside = (path) => path.filter(p => !smallKeys.has(key(p)) || !big.some(q => key(q) === key(p)));
+  // Whichever way round carries more vertices the big ring does not already have
+  // is the outside of the shared border.
+  const detour = outside(fwd).length >= outside(bwd).length ? fwd : bwd;
+  return big.slice(0, i + 1).concat(detour, big.slice(j));
+}
 
 function decodeArcs(topo) {
   const { scale: [sx, sy], translate: [tx, ty] } = topo.transform;
@@ -171,7 +199,6 @@ function build(topo, COUNTRIES) {
 
   const out = [];
   for (const geom of topo.objects.countries.geometries) {
-    if (OMIT.has(geom.properties.name)) continue;
     const polys = geom.type === 'Polygon' ? [geom.arcs] : geom.arcs;
     let rings = polys.map(poly => ringToPoints(poly[0])); // outer ring only
     rings.sort((a, b) => area(b) - area(a));
@@ -200,6 +227,27 @@ function build(topo, COUNTRIES) {
         return flat;
       }).filter(r => r.length >= 6),
     });
+  }
+
+  // Fold merged territories together before anything is matched against data.js,
+  // so the result is one outline with one id rather than two adjacent shapes.
+  const pairs = (flat) => {
+    const r = [];
+    for (let i = 0; i < flat.length; i += 2) r.push([flat[i], flat[i + 1]]);
+    return r;
+  };
+  const byName = new Map(out.map(w => [w.n, w]));
+  for (const [fromName, intoName] of Object.entries(MERGE)) {
+    const from = byName.get(fromName), into = byName.get(intoName);
+    if (!from || !into) continue;
+    const joined = spliceRings(pairs(from.p[0]).slice(0, -1), pairs(into.p[0]).slice(0, -1));
+    into.p = joined
+      ? [joined.concat([joined[0]]).flat()].concat(from.p.slice(1), into.p.slice(1))
+      : from.p.concat(into.p);          // no shared boundary — keep both rings
+    const b = bbox(pairs(into.p[0]));
+    into.c = [(b[0] + b[2]) / 2, (b[1] + b[3]) / 2].map(v => +v.toFixed(2));
+    into.s = +Math.max(b[2] - b[0], b[3] - b[1]).toFixed(1);
+    out.splice(out.indexOf(from), 1);
   }
 
   const byAtlasName = new Map(out.map(w => [w.n, w]));

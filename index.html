@@ -115,6 +115,29 @@
     </div>
   </section>
 
+  <!-- Inside .shell on purpose. The old footer sat outside it and painted over the
+       compare pickers: .shell is a stacking context at z-index 1, so the popover's
+       z-index 40 is trapped inside it and any later sibling wins. As a child of
+       .shell this note is in the same context, and the popover draws over it. -->
+  <footer class="site-note">
+    <h2>On Israel, Palestine and this map</h2>
+    <p>GeoLearn has no entry for Israel. The land between the river and the sea is mapped
+      here as Palestine, and it will stay that way. That is a deliberate choice by the
+      person who built this site, and it is a political one.</p>
+    <p>The first reason is the conduct of the Israeli government: the killing, starvation
+      and mass displacement of Palestinians in Gaza, and the decades of dispossession,
+      settlement and state violence that came before it. I regard that as genocide and as
+      state terrorism, and I am not willing to hand it a flag and a study card on something
+      I made.</p>
+    <p>The second is that the name is older than the argument. This land has been called
+      Palestine for the greater part of two thousand years &mdash; in Roman, Ottoman and
+      Mandate usage alike &mdash; and the people living on it have been Palestinians
+      throughout.</p>
+    <p>Officially the terminology is still contested: courts, institutions and governments
+      disagree about which words apply here, and that argument is not settled. This site
+      takes a side anyway. Everything else on GeoLearn is as accurate as I can make it.</p>
+  </footer>
+
 </div>
 
 <script src="data.js"></script>

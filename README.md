@@ -8,10 +8,16 @@ GeoLearn collects the small visual tells that identify a country in Street View 
 side of the road traffic drives on, bollard shapes, road-sign styling, licence-plate
 colours, script and language, plus the countries it's most often mixed up with — and lets
 you look them up or compare them side by side. **Every country in the world is in the
-dataset** — all 193 UN members plus Vatican City, Kosovo, Taiwan and Palestine, and the
+dataset** — the UN members plus Vatican City, Kosovo, Taiwan and Palestine, and the
 territories that play as their own place in GeoGuessr (Hong Kong, Macau, Puerto Rico, the
 Faroes, Réunion, Guam and the rest). 217 entries in total, each marked with whether Google
 actually drove it or whether the only panoramas are user photospheres.
+
+One deliberate exception: **there is no Israel entry.** The land is mapped here as
+Palestine, as one country and one outline, and the reasoning is stated in the note at the
+foot of the site. It is an editorial decision rather than an omission, so it is worth
+knowing before you use this as a study reference — a standard GeoGuessr map will still drop
+you there and will still score it as Israel.
 
 It's a **static site with no build step and no framework**: plain HTML, CSS, and
 JavaScript. Nothing to install, nothing to compile. (One generated file, `globe-data.js`,
@@ -369,7 +375,7 @@ data at all.
 
 ## Globe geometry
 
-`globe-data.js` is **generated, not hand-written**. It holds 177 country outlines derived
+`globe-data.js` is **generated, not hand-written**. It holds 176 country outlines derived
 from [Natural Earth](https://www.naturalearthdata.com/) 1:110m country boundaries (public
 domain), taken from the `world-atlas` package and processed down to something small enough
 to ship inline:
@@ -378,6 +384,9 @@ to ship inline:
 - outer rings only — holes are invisible at this scale
 - rings smaller than ~1.1° of bounding-box diagonal dropped, except each country's largest
 - Douglas-Peucker simplified at 0.28°, coordinates rounded to 2 decimals
+- outlines listed in `MERGE` folded into their neighbour — the atlas splits Palestine into
+  two polygons and this site draws it as one, so `spliceRings()` finds the boundary the two
+  rings share, keeps the way round the outside of it and drops the border itself
 
 That leaves ~5,000 points in ~70 KB, which draws at 60 fps. Each entry also carries `g`,
 the matching `COUNTRIES` id, so `globe.js` knows which countries are clickable — the
