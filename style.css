@@ -1435,6 +1435,179 @@ nav.tabs button:not(.active):hover {
   padding: 2px 7px;
 }
 
+/* ---------- Density columns ---------- */
+
+/* Three re-rankings of the same scan, side by side, because the point is the
+   contrast: the clue at the top of one column is at the bottom of the next.
+   auto-fit rather than a fixed three, so the columns fold to two and then one
+   as the article narrows without a breakpoint of their own. */
+.guide-density {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(238px, 1fr));
+  gap: 14px;
+  margin: 0 0 8px;
+}
+
+.guide-density.is-single { grid-template-columns: minmax(0, 1fr); max-width: 68ch; }
+
+.density-col {
+  /* A column so the "if the scan is dry" line can be pushed to the bottom of
+     every card — the three lists are different lengths and the footers lining
+     up is what makes them read as one table. */
+  display: flex;
+  flex-direction: column;
+  background: var(--surface-raised);
+  border: 1px solid var(--line);
+  border-top: 2px solid var(--accent);
+  border-radius: var(--radius);
+  padding: 16px 16px 18px;
+  /* One accent per settlement type, so the columns are separable at a glance
+     and the same colour can mark the tier wherever it is reused. */
+  --accent: var(--chalk-dim);
+}
+
+.density-col[data-tier="urban"]    { --accent: var(--sign-blue); }
+.density-col[data-tier="suburban"] { --accent: var(--lane-yellow); }
+.density-col[data-tier="rural"]    { --accent: var(--confirm-green); }
+
+.density-head { margin-bottom: 10px; }
+
+.density-head h3 {
+  font-size: 19px;
+  color: var(--accent);
+  margin-bottom: 2px;
+}
+
+.density-kicker {
+  display: block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--chalk-dim);
+}
+
+.density-tell {
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--chalk-dim);
+  margin: 0 0 14px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--line);
+}
+
+.density-label {
+  font-family: 'Barlow Condensed', sans-serif;
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 0.07em;
+  margin-bottom: 8px;
+}
+
+.density-label.is-first { color: var(--accent); }
+.density-label.is-fading { color: var(--chalk-dim); margin-top: 16px; }
+
+.density-first {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.density-first li {
+  display: flex;
+  gap: 9px;
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--chalk-dim);
+  margin-bottom: 10px;
+}
+
+/* The rank is the whole argument of the block, so it is set in the mono face
+   and the tier's colour rather than left to a list marker. */
+.density-rank {
+  flex: none;
+  width: 17px;
+  height: 17px;
+  margin-top: 2px;
+  border-radius: 50%;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  line-height: 15px;
+  text-align: center;
+}
+
+.density-cue { min-width: 0; }
+.density-cue strong { color: var(--chalk); font-weight: 600; }
+
+.density-chapter {
+  display: block;
+  margin-top: 3px;
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  letter-spacing: 0.03em;
+  color: var(--accent);
+  opacity: 0.9;
+  text-align: left;
+  transition: opacity 0.15s;
+}
+
+.density-chapter::before { content: "\2192\00a0"; }
+.density-chapter:hover { opacity: 1; text-decoration: underline; }
+
+.density-fading {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.density-fading li {
+  position: relative;
+  padding-left: 14px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--chalk-dim);
+  opacity: 0.72;
+  margin-bottom: 7px;
+}
+
+.density-fading li::before {
+  content: "\2715";
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-size: 9px;
+  line-height: 1.9;
+  color: var(--bollard-red);
+}
+
+.density-fading strong { color: var(--chalk); font-weight: 600; }
+
+.density-move {
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--chalk-dim);
+}
+
+.density-move .label {
+  display: block;
+  font-family: 'Barlow Condensed', sans-serif;
+  text-transform: uppercase;
+  font-size: 11.5px;
+  letter-spacing: 0.07em;
+  color: var(--chalk);
+  margin-bottom: 4px;
+}
+
+.density-caption { margin-bottom: 24px; }
+
 /* ---------- Self-test ---------- */
 
 .guide-test { margin-top: 26px; }
@@ -1583,6 +1756,10 @@ nav.tabs button:not(.active):hover {
   .browse-body.has-selection .detail-col { order: -1; }
   .has-selection .grid { grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); }
   .guide-layout { grid-template-columns: 1fr; }
+
+  /* Stack the settlement columns rather than letting auto-fit leave a lone
+     third card hanging under a row of two. */
+  .guide-density { grid-template-columns: minmax(0, 1fr); }
 
   /* Collapsed by default: the rail becomes a one-line disclosure naming the open
      chapter, so the article stays the first thing on the screen. */

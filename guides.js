@@ -17,6 +17,74 @@
 // minute per drill. It is derived from the chapter, so rewrite it when the
 // chapter grows rather than guessing.
 
+// How built-up a drop is changes which clues exist at all, so it changes the
+// order you reach for them in. The six-step scan never changes; its payouts do.
+// A bollard is an interurban object and a shopfront is an urban one, and a
+// player who runs the same priority list in a city and on a forest road is
+// spending half of every round looking at nothing.
+//
+// `guide` points each cue at the chapter that teaches it, so the block renders
+// a link rather than restating the lesson. A cue with `guide: null` is one the
+// book has no chapter for yet — architecture, mainly.
+const DENSITY_TIERS = [
+  {
+    id: "urban",
+    name: "Urban",
+    kicker: "City and town centre",
+    tell: "Continuous building frontage, kerbs and pavements, pedestrians, traffic lights, cars parked along both kerbs. No verge, and no horizon.",
+    first: [
+      { guide: "script", text: "**Read something.** Text is free here — a shopfront, a van door, a menu board, a poster. Script first, then diacritics. A city round should be answered on words before anything else is touched." },
+      { guide: "domains", text: "**Domains and phone numbers.** Advertising is dense in a centre and nearly absent outside one. A `.pl` on an awning or a leading `+3` on a shopfront ends the round outright." },
+      { guide: "plates", text: "**Parked plates.** Both kerbs are lined with stationary cars at reading distance, which is the easiest plate work in the game." },
+      { guide: "signs", text: "**Street-name signs.** The name plate itself is a national design — enamel or pressed metal, wall-mounted or on a pole, and a colour that barely varies inside a country." },
+      { guide: null, text: "**Architecture and street furniture.** Roof pitch, balconies, shutters, facade wiring, pavement tiling, bins and bike racks. Slower to learn than a bollard, but always present." },
+    ],
+    fading: [
+      "**Bollards** — there is no verge to put them on, and the posts in a pedestrian zone are municipal furniture, not the national road design.",
+      "**Poles and overhead wire** — buried, or hidden behind the buildings.",
+      "**Sun, soil and vegetation** — the sky is cropped, the ground is paved and the plants were planted.",
+    ],
+    move: "Head for the largest junction, a bus stop or a petrol station. Signage concentrates where traffic has to make decisions.",
+  },
+  {
+    id: "suburban",
+    name: "Suburban",
+    kicker: "Housing, estates and shop parades",
+    tell: "Detached or terraced houses with driveways and garden walls, a verge that comes and goes, pavement on one side, a parade of shops every few hundred metres, and very little traffic.",
+    first: [
+      { guide: "signs", text: "**Signs at the estate mouth.** Residential warning signs and the direction sign where the estate meets the through road carry the full national typeface and colours." },
+      { guide: "poles", text: "**Poles come back.** Distribution poles reappear the moment the buildings stop touching — wood or concrete, and the transformer and insulator style with them." },
+      { guide: "road-markings", text: "**Kerb and parking paint.** Restriction paint, edge lines and the centre line survive out here where the shopfronts do not." },
+      { guide: "plates", text: "**Driveways.** Every drive is a stationary car with both plates readable from the road at your leisure." },
+      { guide: null, text: "**House-scale architecture.** Roof material, fencing, letterboxes, meter boxes, house numbering, garden hedging. Suburbs are more nationally uniform than city centres are." },
+    ],
+    fading: [
+      "**Domains and phone codes** — advertising needs an audience, and it thins out within a street of the shop parade.",
+      "**Bollards** — on the through road, yes; on the estate streets, almost never.",
+    ],
+    move: "Drive toward the arterial road the estate hangs off. A suburb is always attached to something bigger, and the junction with it is signposted.",
+  },
+  {
+    id: "rural",
+    name: "Rural",
+    kicker: "Open road, field and forest",
+    tell: "Verge, crop or trees to both sides, no pavement, buildings sparse or absent, and the horizon visible.",
+    first: [
+      { guide: "the-car", text: "**The car.** Out here it is often the only man-made object with a nationality. Blur shape, snorkel, camera generation." },
+      { guide: "bollards", text: "**Bollards.** This is the bollard's home ground — Europe's interurban roads are lined with them, and one post is frequently the entire answer." },
+      { guide: "road-markings", text: "**Paint and guardrail.** Centre-line colour, dash length, edge lines and the guardrail's post shape all run continuously along an empty road." },
+      { guide: "poles", text: "**Poles.** The one object present in almost every rural drop that is not the road itself." },
+      { guide: "sun-and-soil", text: "**Sun, soil and vegetation.** A full sky and bare ground make this the only setting where the climate clues are at full strength." },
+    ],
+    fading: [
+      "**Script and language** — a rural round can run a kilometre without a readable word.",
+      "**Domains and phone codes** — nobody is advertising to an empty field.",
+      "**Plates** — traffic is thin, and what passes you is moving fast.",
+    ],
+    move: "Follow the road to the nearest junction or bridge. A rural round's only text is usually one direction sign several hundred metres away — and it is worth the drive.",
+  },
+];
+
 const COURSE = [
   {
     id: "how-to-look",
@@ -37,6 +105,8 @@ const COURSE = [
       ]},
 
       { t: "callout", tone: "tip", label: "The discipline", text: "Run all six steps before you place a pin, even when step one already told you the answer. The round where you are certain after two seconds is exactly the round that is about to punish you — [[albania]] looks like [[italy]] until you read a word." },
+
+      { t: "p", text: "One thing the scan does not tell you is which of its steps will actually pay out, and that is decided by where you landed rather than by the order: a city has no bollards and a forest road has nothing to read. {{density|Urban, suburban, rural}} is the chapter that re-ranks the scan for each of those three settings — read the clue chapters first, then that one." },
 
       { t: "p", text: "The rest of this course is one chapter per step, and each chapter ends with drills. Work through them in order; the later chapters assume you can already do the earlier ones without thinking." }
     ]
@@ -355,6 +425,41 @@ const COURSE = [
     ]
   },
   {
+    id: "density",
+    title: "Urban, suburban, rural",
+    goal: "Classify the drop in one second, then reach for the clue family that place actually has.",
+    minutes: 6,
+    body: [
+      { t: "p", text: "Every chapter so far taught one clue family as if all of them were always available. They are not. A bollard is an **interurban object** — it exists to mark the edge of a road running between towns, so a city centre has none. A shopfront is an urban object; an empty forest road has none of those either. The scan from {{how-to-look|the first chapter}} still runs in the same order every round, but which steps pay out is decided before you look at anything: by how built-up the place is." },
+
+      { t: "p", text: "So make that the thing you read first. It costs no time — you cannot help seeing it — and it tells you which four clues are worth spending the round on and which three are not there to be found." },
+
+      { t: "steps", label: "Classifying the drop in one second", items: [
+        "**Is there a pavement?** A raised kerb with a footway is the cleanest urban-or-suburban signal there is.",
+        "**Can you see the horizon?** If buildings crop the sky, you are urban. If you can see to the edge of the world, you are rural.",
+        "**Is there a verge?** Grass or gravel between the asphalt and whatever is beyond it means roadside furniture is possible.",
+        "**Do the buildings touch?** Continuous frontage is a centre; gaps with driveways are suburban; isolated farms are rural.",
+        "**Is anything advertising at you?** Signage density, not building density, is what decides whether the text clues will pay."
+      ]},
+
+      { t: "density", caption: "The same scan, re-ranked three ways. Each cue links to the chapter that teaches it." },
+
+      { t: "callout", tone: "warn", label: "The mismatch is the real cost", text: "A player trained on rural European maps lands in a city and spends fifteen seconds hunting for a post at a roadside that has no roadside. A player trained on urban maps lands on a forest road and keeps panning for a word that is not going to appear. Both are looking hard at the wrong half of the round. The fix is not more study — it is spending the first second on the classification." },
+
+      { t: "p", text: "The **edge of town** is the best drop in the game and worth recognising as its own case: the last shop parade, the town-boundary sign, a bollard on the verge and a plate on a parked car all in one panorama. If the scan is going badly and you have a choice of direction, drive toward the transition rather than deeper into either side of it." },
+
+      { t: "callout", tone: "tip", label: "Density is also a clue in itself", text: "How a country builds is national. Ribbon development along every road is [[belgium]]; sudden dense villages with nothing between them is much of [[france]]. Enormous verges and set-back houses read American or Australian long before you find a route marker. The classification narrows the answer and re-ranks the scan at the same time." },
+
+      { t: "p", text: "This also decides which map rewards which study. The official {{world|World map}} is rural-heavy, so it pays the car, the paint and the poles. The {{urban-world|urban and balanced worlds}} are the opposite, and reward the language chapter far more than the bollard one. Knowing which map you queued into tells you which column below you will be living in." },
+
+      { t: "drills", items: [
+        { q: "You land on a two-lane road with a wide grass verge, no pavement, forest to both sides, and a flat white post with a black cap carrying a red reflector.", a: "germany", why: "A rural drop, so the roadside furniture is at full strength and the text clues are probably not coming. The capped flat bollard is Germany — and the trap is Austria, whose post has a dark cap too, so the reflector colour and shape of the cap are what you check." },
+        { q: "A dense city street, continuous four-storey frontage, trams, and shopfronts written in Latin script with the letters ł and ż.", a: "poland", why: "Urban, so words come first and the bollard question never arises. The Polish diacritics answer it immediately — this is a round where a second spent looking for roadside furniture is a second wasted." },
+        { q: "A narrow residential street with no pavement and no centre line, low walls in front of two-storey houses, concrete poles carrying a stack of small transformers and a mass of cabling, and a boxy white car parked nose-in to a drive.", a: "japan", why: "Suburban, so the live clues are the poles, the street form and the parked cars rather than shopfront text. Dense stacked cabling on slim concrete poles, kerbless streets and a white kei car is the Japanese suburb — the script would confirm it, but you did not need to find any." }
+      ]}
+    ]
+  },
+  {
     id: "putting-it-together",
     title: "Putting it together",
     goal: "Run the whole scan as one flow, and beat the trap pairs that survive every individual test.",
@@ -363,6 +468,7 @@ const COURSE = [
       { t: "p", text: "You now have every individual tool. This chapter is about the order you use them in, and about what to do when two countries refuse to separate." },
 
       { t: "steps", label: "The full flow", items: [
+        "**How built-up is it?** Urban, suburban or rural — it costs no time and it tells you which of the steps below are worth running. See {{density|the density chapter}}.",
         "**Side of the road.** Half the world gone, and the left-hand half is the small one.",
         "**Any text at all.** Script family first — often the whole answer. Latin means drop to diacritics.",
         "**The car.** Blur, snorkel, camera generation. Region, sometimes country.",
@@ -499,6 +605,8 @@ const GUIDE_MAPS = [
 
       { t: "p", text: "**Roadside nothing is normal.** A large share of official coverage is empty rural road: no signs, no buildings, no people. This map rewards the clues that survive that — the car, the paint, the poles, the vegetation and the sun — far more than the ones that need a town." },
 
+      { t: "density", only: ["rural"], caption: "The column this map lives in. The full three-way ranking is in {{density|Urban, suburban, rural}}." },
+
       { t: "steps", label: "How to play it", items: [
         "**Run the full scan before moving.** Most rounds have more information in the first panorama than players use.",
         "**Move along the road, not away from it.** Junctions, bus stops and bridges concentrate signage.",
@@ -557,6 +665,8 @@ const GUIDE_MAPS = [
       { t: "p", text: "**Urban worlds** drop you in towns and cities only. Signage, shopfronts, plates and architecture are everywhere; the empty-road clues you leaned on — paint, poles, vegetation — mostly stop mattering." },
 
       { t: "callout", tone: "warn", label: "Urban maps punish a bollard-first habit", text: "If your instinct on landing is to look for a post at the roadside, an urban map will feel strangely hard. Retrain the first move to **read something** — a shopfront, a van, a street sign — because in a city there is always text." },
+
+      { t: "density", only: ["urban"], caption: "The order to run in a city drop, from {{density|Urban, suburban, rural}} — where the suburban and rural columns are, and where the difference is argued out." },
 
       { t: "steps", label: "What to study for these", items: [
         "**Scripts and diacritics**, well past the easy ones. Balanced maps put the rare alphabets in front of you constantly.",

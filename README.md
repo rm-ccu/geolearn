@@ -135,6 +135,7 @@ Chapters live in `guides.js` as **typed blocks**, not HTML:
 | `swatches` | Real bollard/sign/plate swatches for a list of country ids |
 | `diff` | A two-country comparison, same rows the Compare view builds. `rows` picks the fields — `["bollard", "plates"]` for a European pair, `["plates", "signs"]` for an East African one |
 | `drills` | Click-to-reveal practice questions, answers linked to countries (or to states) |
+| `density` | The urban / suburban / rural columns from `DENSITY_TIERS` — each one the same scan re-ranked, with the cues linked to the chapter that teaches them. `only: ["urban"]` renders a single column, which is how a map guide shows the setting that map is made of |
 | `shields` | Route-marker swatches for a list of state ids |
 | `families` | The five route-marker families and every state in each, built from `states.js` |
 | `state-diff` | Two states side by side — marker family and landscape |
@@ -159,7 +160,7 @@ Showing the rows that **cannot** split a pair is half the lesson: on Germany vs 
 plate row is deliberately there, dimmed, because those plates will never help you and the
 bollard's black cap is the whole difference.
 
-The book is complete: **12 chapters**, 35 drills, a scored **self-test**, and **7 map
+The book is complete: **13 chapters**, 38 drills, a scored **self-test**, and **7 map
 guides** — World, A Community World, Famous Places, urban and balanced worlds, country
 streaks, the United States and flags. Every country, state, chapter link and drill answer is
 checked against `data.js` and `states.js`.

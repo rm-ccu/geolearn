@@ -180,6 +180,41 @@ function familiesBlock(b) {
   return `<div class="guide-families">${groups}${b.caption ? `<div class="swatch-caption">${inline(b.caption)}</div>` : ""}</div>`;
 }
 
+// The three settlement types as columns, each one a re-ranked scan. `only` cuts
+// it down to a single tier so a map guide can show the column that map is made
+// of without repeating the other two. The cue links reuse [data-guide], so the
+// delegated rail handler routes them with no wiring here.
+function densityBlock(b) {
+  const tiers = b.only ? DENSITY_TIERS.filter(t => b.only.includes(t.id)) : DENSITY_TIERS;
+  const cols = tiers.map(t => {
+    const cues = t.first.map((c, i) => {
+      const e = c.guide ? guideEntry(c.guide) : null;
+      const link = e
+        ? `<button type="button" class="density-chapter" data-guide="${c.guide}"
+             title="Open the chapter">${escapeHtml(e.entry.title)}</button>`
+        : "";
+      return `<li><span class="density-rank">${i + 1}</span><span class="density-cue">${inline(c.text)}${link}</span></li>`;
+    }).join("");
+    const fading = t.fading.map(f => `<li>${inline(f)}</li>`).join("");
+    return `
+      <section class="density-col" data-tier="${t.id}">
+        <header class="density-head">
+          <h3>${escapeHtml(t.name)}</h3>
+          <span class="density-kicker">${escapeHtml(t.kicker)}</span>
+        </header>
+        <p class="density-tell">${inline(t.tell)}</p>
+        <div class="density-label is-first">Reach for, in order</div>
+        <ol class="density-first">${cues}</ol>
+        <div class="density-label is-fading">Not there to be found</div>
+        <ul class="density-fading">${fading}</ul>
+        <div class="density-move"><span class="label">If the scan is dry</span>${inline(t.move)}</div>
+      </section>`;
+  }).join("");
+  return `
+    <div class="guide-density ${tiers.length === 1 ? "is-single" : ""}">${cols}</div>
+    ${b.caption ? `<div class="swatch-caption density-caption">${inline(b.caption)}</div>` : ""}`;
+}
+
 function stateDiffBlock(b) {
   const a = stateById(b.a), z = stateById(b.b);
   if (!a || !z) return "";
@@ -390,6 +425,7 @@ function renderBlock(b) {
     case "shields":  return shieldsBlock(b);
     case "families": return familiesBlock(b);
     case "state-diff": return stateDiffBlock(b);
+    case "density":  return densityBlock(b);
     default:         return "";
   }
 }
